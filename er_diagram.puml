@@ -1,0 +1,445 @@
+@startuml AquaScape_ER_Diagram
+!theme plain
+skinparam linetype ortho
+skinparam ranksep 80
+skinparam nodesep 55
+skinparam padding 8
+skinparam defaultFontName "Helvetica Neue"
+skinparam shadowing false
+skinparam backgroundColor #F1F5F9
+
+' ── ENTITY STYLING BY DOMAIN ─────────────────────────────────
+skinparam entity {
+  BackgroundColor<<core>>           #EFF6FF
+  BorderColor<<core>>               #1D4ED8
+  HeaderBackgroundColor<<core>>     #1D4ED8
+  FontColor<<core>>                 #FFFFFF
+  FontStyle<<core>>                 bold
+  FontSize<<core>>                  12
+  AttributeFontColor<<core>>        #1E3A5F
+  AttributeFontSize<<core>>         10
+  BackgroundColor<<builder>>        #F0FDF4
+  BorderColor<<builder>>            #15803D
+  HeaderBackgroundColor<<builder>>  #15803D
+  FontColor<<builder>>              #FFFFFF
+  FontStyle<<builder>>              bold
+  FontSize<<builder>>               12
+  AttributeFontColor<<builder>>     #14532D
+  AttributeFontSize<<builder>>      10
+  BackgroundColor<<order>>          #FFF7ED
+  BorderColor<<order>>              #C2410C
+  HeaderBackgroundColor<<order>>    #C2410C
+  FontColor<<order>>                #FFFFFF
+  FontStyle<<order>>                bold
+  FontSize<<order>>                 12
+  AttributeFontColor<<order>>       #7C2D12
+  AttributeFontSize<<order>>        10
+  BackgroundColor<<supplier>>       #FAF5FF
+  BorderColor<<supplier>>           #7C3AED
+  HeaderBackgroundColor<<supplier>> #7C3AED
+  FontColor<<supplier>>             #FFFFFF
+  FontStyle<<supplier>>             bold
+  FontSize<<supplier>>              12
+  AttributeFontColor<<supplier>>    #4C1D95
+  AttributeFontSize<<supplier>>     10
+}
+
+skinparam ArrowColor      #64748B
+skinparam ArrowThickness  1.5
+skinparam ArrowFontSize   9
+skinparam ArrowFontColor  #64748B
+
+skinparam package {
+  FontStyle bold
+  FontSize  13
+  BorderThickness 2
+}
+
+' ─────────────────────────────────────────────────────────────
+' CORE DOMAIN                                     (11 tables)
+' ─────────────────────────────────────────────────────────────
+package "CORE DOMAIN  ·  11 Tables" #EFF6FF {
+
+  entity ROLES <<core>> {
+    * role_id : NUMBER <<PK>>
+    --
+    role_name : VARCHAR2(50)
+    description : VARCHAR2(200)
+  }
+
+  entity USERS <<core>> {
+    * user_id : NUMBER <<PK>>
+    --
+    role_id : NUMBER <<FK>>
+    email : VARCHAR2(100)
+    password_hash : VARCHAR2(255)
+    first_name / last_name : VARCHAR2(50)
+    is_active : CHAR(1)
+    created_at : DATE
+  }
+
+  entity CATEGORIES <<core>> {
+    * category_id : NUMBER <<PK>>
+    --
+    parent_category_id : NUMBER <<FK self>>
+    category_name : VARCHAR2(100)
+    description : VARCHAR2(500)
+  }
+
+  entity SUPPLIERS <<core>> {
+    * supplier_id : NUMBER <<PK>>
+    --
+    supplier_name : VARCHAR2(150)
+    contact_name : VARCHAR2(100)
+    email / phone : VARCHAR2
+    address / city / country : VARCHAR2
+  }
+
+  entity PRODUCTS <<core>> {
+    * product_id : NUMBER <<PK>>
+    --
+    category_id : NUMBER <<FK>>
+    supplier_id : NUMBER <<FK>>
+    product_name : VARCHAR2(200)
+    product_type : VARCHAR2(20)
+    price : NUMBER(10,2)
+    stock_quantity : NUMBER
+    is_active : CHAR(1)
+  }
+
+  entity INVENTORY <<core>> {
+    * inventory_id : NUMBER <<PK>>
+    --
+    product_id : NUMBER <<FK>>
+    quantity_in_stock : NUMBER
+    reorder_level : NUMBER
+    last_updated : DATE
+  }
+
+  entity TANKS <<core>> {
+    * tank_id : NUMBER <<PK>>
+    --
+    product_id : NUMBER <<FK>>
+    capacity_liters : NUMBER
+    dimensions : VARCHAR2(50)
+    material : VARCHAR2(50)
+    shape : VARCHAR2(30)
+  }
+
+  entity FISH <<core>> {
+    * fish_id : NUMBER <<PK>>
+    --
+    product_id : NUMBER <<FK>>
+    species : VARCHAR2(100)
+    care_level : VARCHAR2(20)
+    min_tank_size : NUMBER
+    temp_min / temp_max : NUMBER
+  }
+
+  entity PLANTS <<core>> {
+    * plant_id : NUMBER <<PK>>
+    --
+    product_id : NUMBER <<FK>>
+    species : VARCHAR2(100)
+    light_requirement : VARCHAR2(20)
+    co2_required : CHAR(1)
+    growth_rate : VARCHAR2(20)
+  }
+
+  entity EQUIPMENT <<core>> {
+    * equipment_id : NUMBER <<PK>>
+    --
+    product_id : NUMBER <<FK>>
+    equipment_type : VARCHAR2(50)
+    wattage : NUMBER
+    compatibility_notes : VARCHAR2(500)
+  }
+
+  entity DECORATIONS <<core>> {
+    * decoration_id : NUMBER <<PK>>
+    --
+    product_id : NUMBER <<FK>>
+    material : VARCHAR2(50)
+    dimensions : VARCHAR2(50)
+    color : VARCHAR2(30)
+  }
+
+}
+
+' ─────────────────────────────────────────────────────────────
+' BUILDER DOMAIN                                   (8 tables)
+' ─────────────────────────────────────────────────────────────
+package "BUILDER DOMAIN  ·  8 Tables" #F0FDF4 {
+
+  entity CUSTOMERS <<builder>> {
+    * customer_id : NUMBER <<PK>>
+    --
+    user_id : NUMBER <<FK>>
+    shipping_address : VARCHAR2(500)
+    billing_address : VARCHAR2(500)
+    loyalty_points : NUMBER
+    created_at : DATE
+  }
+
+  entity CART <<builder>> {
+    * cart_id : NUMBER <<PK>>
+    --
+    customer_id : NUMBER <<FK>>
+    created_at : DATE
+    updated_at : DATE
+  }
+
+  entity CART_ITEMS <<builder>> {
+    * cart_item_id : NUMBER <<PK>>
+    --
+    cart_id : NUMBER <<FK>>
+    product_id : NUMBER <<FK>>
+    quantity : NUMBER
+    unit_price : NUMBER(10,2)
+  }
+
+  entity AQUARIUM_SETUPS <<builder>> {
+    * setup_id : NUMBER <<PK>>
+    --
+    customer_id : NUMBER <<FK>>
+    tank_id : NUMBER <<FK>>
+    setup_name : VARCHAR2(150)
+    total_price : NUMBER(10,2)
+    status : VARCHAR2(20)
+    created_at : DATE
+  }
+
+  entity SETUP_ITEMS <<builder>> {
+    * setup_item_id : NUMBER <<PK>>
+    --
+    setup_id : NUMBER <<FK>>
+    product_id : NUMBER <<FK>>
+    quantity : NUMBER
+    unit_price : NUMBER(10,2)
+  }
+
+  entity SAVED_SETUPS <<builder>> {
+    * saved_id : NUMBER <<PK>>
+    --
+    customer_id : NUMBER <<FK>>
+    setup_id : NUMBER <<FK>>
+    saved_at : DATE
+  }
+
+  entity WISHLIST <<builder>> {
+    * wishlist_id : NUMBER <<PK>>
+    --
+    customer_id : NUMBER <<FK>>
+    product_id : NUMBER <<FK>>
+    added_at : DATE
+  }
+
+  entity COMPATIBILITY_RULES <<builder>> {
+    * rule_id : NUMBER <<PK>>
+    --
+    product_id_1 : NUMBER <<FK>>
+    product_id_2 : NUMBER <<FK>>
+    rule_type : VARCHAR2(20)
+    notes : VARCHAR2(500)
+  }
+
+}
+
+' ─────────────────────────────────────────────────────────────
+' ORDER DOMAIN                                     (7 tables)
+' ─────────────────────────────────────────────────────────────
+package "ORDER DOMAIN  ·  7 Tables" #FFF7ED {
+
+  entity DISCOUNTS <<order>> {
+    * discount_id : NUMBER <<PK>>
+    --
+    code : VARCHAR2(50)
+    discount_type : VARCHAR2(20)
+    discount_value : NUMBER(5,2)
+    min_order_amount : NUMBER
+    valid_from / valid_until : DATE
+    usage_limit : NUMBER
+  }
+
+  entity ORDERS <<order>> {
+    * order_id : NUMBER <<PK>>  (seq@1000)
+    --
+    customer_id : NUMBER <<FK>>
+    order_status : VARCHAR2(20)
+    total_amount : NUMBER(10,2)
+    shipping_address : VARCHAR2(500)
+    created_at : DATE
+  }
+
+  entity ORDER_ITEMS <<order>> {
+    * order_item_id : NUMBER <<PK>>
+    --
+    order_id : NUMBER <<FK>>
+    product_id : NUMBER <<FK>>
+    quantity : NUMBER
+    unit_price : NUMBER(10,2)
+  }
+
+  entity ORDER_DISCOUNTS <<order>> {
+    * od_id : NUMBER <<PK>>
+    --
+    order_id : NUMBER <<FK>>
+    discount_id : NUMBER <<FK>>
+    discount_amount : NUMBER(10,2)
+  }
+
+  entity PAYMENTS <<order>> {
+    * payment_id : NUMBER <<PK>>
+    --
+    order_id : NUMBER <<FK>>
+    payment_method : VARCHAR2(50)
+    payment_status : VARCHAR2(20)
+    amount : NUMBER(10,2)
+    paid_at : DATE
+  }
+
+  entity RETURNS <<order>> {
+    * return_id : NUMBER <<PK>>
+    --
+    order_id : NUMBER <<FK>>
+    customer_id : NUMBER <<FK>>
+    reason : VARCHAR2(500)
+    return_status : VARCHAR2(20)
+    created_at : DATE
+  }
+
+  entity RETURN_ITEMS <<order>> {
+    * return_item_id : NUMBER <<PK>>
+    --
+    return_id : NUMBER <<FK>>
+    order_item_id : NUMBER <<FK>>
+    quantity : NUMBER
+    refund_amount : NUMBER(10,2)
+  }
+
+}
+
+' ─────────────────────────────────────────────────────────────
+' SUPPLIER DOMAIN                                  (6 tables)
+' ─────────────────────────────────────────────────────────────
+package "SUPPLIER DOMAIN  ·  6 Tables" #FAF5FF {
+
+  entity SUPPLIER_PO <<supplier>> {
+    * po_id : NUMBER <<PK>>  (seq@5000)
+    --
+    supplier_id : NUMBER <<FK>>
+    po_status : VARCHAR2(20)
+    total_amount : NUMBER(10,2)
+    created_at : DATE
+    expected_delivery : DATE
+  }
+
+  entity SPO_ITEMS <<supplier>> {
+    * spo_item_id : NUMBER <<PK>>
+    --
+    po_id : NUMBER <<FK>>
+    product_id : NUMBER <<FK>>
+    quantity_ordered : NUMBER
+    unit_cost : NUMBER(10,2)
+  }
+
+  entity STOCK_BATCHES <<supplier>> {
+    * batch_id : NUMBER <<PK>>
+    --
+    po_id : NUMBER <<FK>>
+    product_id : NUMBER <<FK>>
+    quantity_received : NUMBER
+    received_date : DATE
+    expiry_date : DATE
+  }
+
+  entity LOW_STOCK_ALERTS <<supplier>> {
+    * alert_id : NUMBER <<PK>>
+    --
+    product_id : NUMBER <<FK>>
+    alert_level : NUMBER
+    alerted_at : DATE
+    resolved_at : DATE
+  }
+
+  entity INV_MOVEMENTS <<supplier>> {
+    * movement_id : NUMBER <<PK>>
+    --
+    product_id : NUMBER <<FK>>
+    movement_type : VARCHAR2(20)
+    quantity : NUMBER
+    reference_id : NUMBER
+    created_at : DATE
+  }
+
+  entity AUDIT_LOG <<supplier>> {
+    * log_id : NUMBER <<PK>>  (IDENTITY)
+    --
+    table_name : VARCHAR2(50)
+    operation : VARCHAR2(10)
+    record_id : NUMBER
+    old_values / new_values : CLOB
+    changed_by : VARCHAR2(100)
+    changed_at : TIMESTAMP
+  }
+
+}
+
+' ─────────────────────────────────────────────────────────────
+' RELATIONSHIPS — CORE
+' ─────────────────────────────────────────────────────────────
+USERS           }o--||  ROLES               : "belongs to"
+CATEGORIES      }o--o|  CATEGORIES          : "parent of"
+PRODUCTS        }o--||  CATEGORIES          : "categorised in"
+PRODUCTS        }o--||  SUPPLIERS           : "supplied by"
+INVENTORY       ||--||  PRODUCTS            : "tracks"
+TANKS           ||--||  PRODUCTS            : "is a"
+FISH            ||--||  PRODUCTS            : "is a"
+PLANTS          ||--||  PRODUCTS            : "is a"
+EQUIPMENT       ||--||  PRODUCTS            : "is a"
+DECORATIONS     ||--||  PRODUCTS            : "is a"
+
+' ─────────────────────────────────────────────────────────────
+' RELATIONSHIPS — BUILDER
+' ─────────────────────────────────────────────────────────────
+CUSTOMERS       ||--||  USERS               : "has account"
+CART            }o--||  CUSTOMERS           : "belongs to"
+CART_ITEMS      }o--||  CART                : "in"
+CART_ITEMS      }o--||  PRODUCTS            : "refers to"
+AQUARIUM_SETUPS }o--||  CUSTOMERS           : "built by"
+AQUARIUM_SETUPS }o--||  TANKS               : "uses"
+SETUP_ITEMS     }o--||  AQUARIUM_SETUPS     : "part of"
+SETUP_ITEMS     }o--||  PRODUCTS            : "refers to"
+SAVED_SETUPS    }o--||  CUSTOMERS           : "saved by"
+SAVED_SETUPS    }o--||  AQUARIUM_SETUPS     : "saves"
+WISHLIST        }o--||  CUSTOMERS           : "owned by"
+WISHLIST        }o--||  PRODUCTS            : "contains"
+COMPATIBILITY_RULES }o--|| PRODUCTS         : "product 1"
+COMPATIBILITY_RULES }o--|| PRODUCTS         : "product 2"
+
+' ─────────────────────────────────────────────────────────────
+' RELATIONSHIPS — ORDER
+' ─────────────────────────────────────────────────────────────
+ORDERS          }o--||  CUSTOMERS           : "placed by"
+ORDER_ITEMS     }o--||  ORDERS              : "part of"
+ORDER_ITEMS     }o--||  PRODUCTS            : "refers to"
+ORDER_DISCOUNTS }o--||  ORDERS              : "applied to"
+ORDER_DISCOUNTS }o--||  DISCOUNTS           : "uses"
+PAYMENTS        }o--||  ORDERS              : "for"
+RETURNS         }o--||  ORDERS              : "for"
+RETURNS         }o--||  CUSTOMERS           : "by"
+RETURN_ITEMS    }o--||  RETURNS             : "part of"
+RETURN_ITEMS    }o--||  ORDER_ITEMS         : "from"
+
+' ─────────────────────────────────────────────────────────────
+' RELATIONSHIPS — SUPPLIER
+' ─────────────────────────────────────────────────────────────
+SUPPLIER_PO     }o--||  SUPPLIERS           : "from"
+SPO_ITEMS       }o--||  SUPPLIER_PO         : "part of"
+SPO_ITEMS       }o--||  PRODUCTS            : "orders"
+STOCK_BATCHES   }o--||  SUPPLIER_PO         : "received via"
+STOCK_BATCHES   }o--||  PRODUCTS            : "for"
+LOW_STOCK_ALERTS }o--|| PRODUCTS            : "alert on"
+INV_MOVEMENTS   }o--||  PRODUCTS            : "moves"
+
+@enduml

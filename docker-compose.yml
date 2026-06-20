@@ -1,0 +1,52 @@
+services:
+  oracle:
+    image: container-registry.oracle.com/database/express:21.3.0-xe
+    container_name: aquascape_oracle
+    environment:
+      ORACLE_PWD: AquaScape123
+      ORACLE_CHARACTERSET: AL32UTF8
+    ports:
+      - "1521:1521"
+      - "5500:5500"
+    volumes:
+      - oracle_data:/opt/oracle/oradata
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'SELECT 1 FROM DUAL;' | sqlplus -L SYSTEM/AquaScape123@XE || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 20
+
+  backend:
+    build: ./backend
+    container_name: aquascape_backend
+    environment:
+      ORACLE_HOST: oracle
+      ORACLE_PORT: 1521
+      ORACLE_SERVICE: XEPDB1
+      ORACLE_USER: AQUASCAPE
+      ORACLE_PASSWORD: AquaScape123
+      PORT: 8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      oracle:
+        condition: service_healthy
+    restart: on-failure
+
+  frontend:
+    image: node:20-alpine
+    container_name: aquascape_frontend
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    environment:
+      VITE_API_URL: http://localhost:8000/api/v1
+
+volumes:
+  oracle_data:

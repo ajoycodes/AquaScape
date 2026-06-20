@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+
+# Build outputs
+frontend/dist/
+backend/dist/
+
+# Environment variables
+.env
+.env.local
+backend/.env
+
+# Oracle data volume
+oracle_data/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Temp / generated
+/tmp/
+*.excalidraw
+er_diagram.svg
+er_diagram_viewer.html
+figjam_plugin/

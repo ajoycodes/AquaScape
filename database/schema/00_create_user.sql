@@ -1,0 +1,32 @@
+-- ============================================================
+-- AQUASCAPE — Oracle User & Privilege Setup
+-- Run this as SYSDBA (SYS or SYSTEM user)
+-- ============================================================
+
+-- Create dedicated schema user
+CREATE USER AQUASCAPE IDENTIFIED BY AquaScape123
+    DEFAULT TABLESPACE USERS
+    TEMPORARY TABLESPACE TEMP
+    QUOTA UNLIMITED ON USERS;
+
+-- Core privileges
+GRANT CONNECT, RESOURCE TO AQUASCAPE;
+GRANT CREATE SESSION          TO AQUASCAPE;
+GRANT CREATE TABLE            TO AQUASCAPE;
+GRANT CREATE SEQUENCE         TO AQUASCAPE;
+GRANT CREATE VIEW             TO AQUASCAPE;
+GRANT CREATE PROCEDURE        TO AQUASCAPE;
+GRANT CREATE TRIGGER          TO AQUASCAPE;
+GRANT CREATE TYPE             TO AQUASCAPE;
+GRANT CREATE SYNONYM          TO AQUASCAPE;
+GRANT ALTER SESSION           TO AQUASCAPE;
+GRANT DEBUG CONNECT SESSION   TO AQUASCAPE;
+GRANT EXECUTE ON DBMS_LOCK    TO AQUASCAPE;
+GRANT EXECUTE ON DBMS_OUTPUT  TO AQUASCAPE;
+
+-- Allow unlimited sequences and triggers
+GRANT UNLIMITED TABLESPACE TO AQUASCAPE;
+
+COMMIT;
+
+PROMPT AquaScape schema user created and privileges granted.
