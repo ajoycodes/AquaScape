@@ -24,7 +24,8 @@ router.get('/', async (req, res) => {
     if (search) { sql += ' AND UPPER(p.product_name) LIKE UPPER(:search)'; binds.search = `%${search}%` }
 
     sql = `SELECT * FROM (${sql} ORDER BY p.product_name) WHERE ROWNUM <= :lim`
-    binds.lim = Number(limit)
+    const lim = Number(limit)
+    binds.lim = Number.isFinite(lim) && lim > 0 ? Math.min(lim, 500) : 100
 
     const rows = await query(sql, binds)
     res.json(rows)
@@ -57,13 +58,15 @@ router.get('/type/:type', async (req, res) => {
 // GET /api/v1/products/:id
 router.get('/:id', async (req, res) => {
   try {
+    const id = Number(req.params.id)
+    if (!Number.isFinite(id)) return res.status(400).json({ error: 'Invalid product id' })
     const rows = await query(
       `SELECT p.*, c.category_name, NVL(i.qty_on_hand,0) AS qty_on_hand
        FROM products p
        JOIN categories c ON p.category_id = c.category_id
        LEFT JOIN inventory i ON i.product_id = p.product_id
        WHERE p.product_id = :id`,
-      { id: Number(req.params.id) }
+      { id }
     )
     if (!rows.length) return res.status(404).json({ error: 'Product not found' })
     res.json(rows[0])

@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { query, execute } from '../db.js'
+import { query, execute, oraFriendly } from '../db.js'
 
 const router = Router()
 
@@ -49,7 +49,7 @@ router.post('/:cid/item', async (req, res) => {
       { cid, pid: Number(product_id), qty: Number(quantity), pid2: Number(product_id), qty2: Number(quantity) }
     )
     res.json({ message: 'Item added to cart' })
-  } catch (e) { res.status(422).json({ error: e.message }) }
+  } catch (e) { res.status(422).json({ error: oraFriendly(e).message }) }
 })
 
 // PUT /api/v1/cart/:cid/item/:pid
@@ -64,7 +64,7 @@ router.put('/:cid/item/:pid', async (req, res) => {
       { qty: Number(quantity), pid: Number(req.params.pid), cid: Number(req.params.cid) }
     )
     res.json({ message: 'Cart item updated' })
-  } catch (e) { res.status(422).json({ error: e.message }) }
+  } catch (e) { res.status(422).json({ error: oraFriendly(e).message }) }
 })
 
 // DELETE /api/v1/cart/:cid/item/:pid
@@ -76,7 +76,7 @@ router.delete('/:cid/item/:pid', async (req, res) => {
       { pid: Number(req.params.pid), cid: Number(req.params.cid) }
     )
     res.json({ message: 'Item removed from cart' })
-  } catch (e) { res.status(422).json({ error: e.message }) }
+  } catch (e) { res.status(422).json({ error: oraFriendly(e).message }) }
 })
 
 // DELETE /api/v1/cart/:cid
@@ -87,7 +87,7 @@ router.delete('/:cid', async (req, res) => {
       { cid: Number(req.params.cid) }
     )
     res.json({ message: 'Cart cleared' })
-  } catch (e) { res.status(422).json({ error: e.message }) }
+  } catch (e) { res.status(422).json({ error: oraFriendly(e).message }) }
 })
 
 export default router

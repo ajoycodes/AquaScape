@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { query, execute, callProc, oracledb } from '../db.js'
+import { query, execute, callProc, oracledb, oraFriendly } from '../db.js'
 
 const router = Router()
 
@@ -47,7 +47,7 @@ router.put('/alerts/:id/resolve', async (req, res) => {
       { uid: Number(user_id), id: Number(req.params.id) }
     )
     res.json({ message: 'Alert resolved' })
-  } catch (e) { res.status(422).json({ error: e.message }) }
+  } catch (e) { res.status(422).json({ error: oraFriendly(e).message }) }
 })
 
 // POST /api/v1/inventory/adjust
@@ -63,7 +63,7 @@ router.post('/adjust', async (req, res) => {
         uid: Number(user_id), notes: notes || null }
     )
     res.json({ message: 'Inventory adjusted' })
-  } catch (e) { res.status(422).json({ error: e.message }) }
+  } catch (e) { res.status(422).json({ error: oraFriendly(e).message }) }
 })
 
 // GET /api/v1/inventory/movements
