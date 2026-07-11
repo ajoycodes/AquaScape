@@ -117,10 +117,10 @@ export default function ShopOrders() {
                   }}>
                   <div style={{
                     width: 42, height: 42, borderRadius: 12,
-                    background: o.STATUS === 'DELIVERED' ? '#e8f8ee' : o.STATUS === 'CANCELLED' ? '#fff2f2' : '#e8f2ff',
+                    background: o.STATUS === 'DELIVERED' ? '#e8f8ee' : o.STATUS === 'CANCELLED' ? '#fff2f2' : '#EFEDE6',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                   }}>
-                    <Package size={20} color={o.STATUS === 'DELIVERED' ? '#34c759' : o.STATUS === 'CANCELLED' ? '#ff3b30' : '#0071e3'} />
+                    <Package size={20} color={o.STATUS === 'DELIVERED' ? '#1F7A45' : o.STATUS === 'CANCELLED' ? '#ff3b30' : '#16150F'} />
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 3 }}>
@@ -149,18 +149,18 @@ export default function ShopOrders() {
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
                           <div style={{
                             width: 20, height: 20, borderRadius: '50%',
-                            background: i <= stepIdx ? '#0071e3' : '#e5e5ea',
+                            background: i <= stepIdx ? '#16150F' : '#e5e5ea',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                           }}>
                             {i < stepIdx && <span style={{ color: 'white', fontSize: 10, fontWeight: 700 }}>✓</span>}
                             {i === stepIdx && <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'white' }} />}
                           </div>
-                          <span style={{ fontSize: 9, fontWeight: 500, color: i <= stepIdx ? '#0071e3' : '#aeaeb2', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                          <span style={{ fontSize: 9, fontWeight: 500, color: i <= stepIdx ? '#16150F' : '#aeaeb2', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                             {step}
                           </span>
                         </div>
                         {i < STATUS_STEPS.length - 1 && (
-                          <div style={{ flex: 1, height: 2, background: i < stepIdx ? '#0071e3' : '#e5e5ea', marginBottom: 20 }} />
+                          <div style={{ flex: 1, height: 2, background: i < stepIdx ? '#16150F' : '#e5e5ea', marginBottom: 20 }} />
                         )}
                       </div>
                     ))}

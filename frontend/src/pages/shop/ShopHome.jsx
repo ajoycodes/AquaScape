@@ -3,14 +3,15 @@ import { useNavigate } from 'react-router-dom'
 import { getProducts } from '../../api/client'
 import { addToCart } from '../../api/client'
 import { useShop } from '../../context/ShopContext'
-import { Fish, Leaf, Box, Zap, Gem, ArrowRight, ShoppingCart, Waves } from 'lucide-react'
+import ProductCard from '../../components/ProductCard'
+import { Fish, Leaf, Box, Zap, Gem, ArrowRight, Waves, Truck, ShieldCheck, HeartHandshake, BadgePercent } from 'lucide-react'
 
 const CATEGORIES = [
-  { type: 'FISH',        label: 'Fish',        icon: Fish,   color: '#0071e3', bg: '#e8f2ff' },
-  { type: 'PLANT',       label: 'Plants',       icon: Leaf,   color: '#34c759', bg: '#e8f8ee' },
-  { type: 'TANK',        label: 'Tanks',        icon: Box,    color: '#32ade6', bg: '#e5f5fd' },
-  { type: 'EQUIPMENT',   label: 'Equipment',    icon: Zap,    color: '#bf5af2', bg: '#f5eaff' },
-  { type: 'DECORATION',  label: 'Decorations',  icon: Gem,    color: '#ff9500', bg: '#fff4e5' },
+  { type: 'FISH',        label: 'Fish',        icon: Fish,   color: '#33607E', bg: '#E8F1F5' },
+  { type: 'PLANT',       label: 'Plants',       icon: Leaf,   color: '#2A6B60', bg: '#E6F3F1' },
+  { type: 'TANK',        label: 'Tanks',        icon: Box,    color: '#4A5C6E', bg: '#EDF0F4' },
+  { type: 'EQUIPMENT',   label: 'Equipment',    icon: Zap,    color: '#61548A', bg: '#F0EDF6' },
+  { type: 'DECORATION',  label: 'Decorations',  icon: Gem,    color: '#8A6A24', bg: '#FBF3E4' },
 ]
 
 export default function ShopHome() {
@@ -28,7 +29,7 @@ export default function ShopHome() {
   }, [])
 
   const handleAdd = async (product) => {
-    if (!customer) { navigate('/shop/cart'); return }
+    if (!customer) { navigate('/shop/login', { state: { from: '/shop' } }); return }
     setAdding(product.PRODUCT_ID)
     try {
       await addToCart(customer.id, { product_id: product.PRODUCT_ID, quantity: 1 })
@@ -46,6 +47,17 @@ export default function ShopHome() {
   return (
     <div style={{ maxWidth: 1080, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 48 }}>
 
+      {/* Promo ribbon */}
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+        background: 'var(--ink)', color: 'rgba(255,255,255,0.92)',
+        borderRadius: 12, padding: '11px 16px', fontSize: 13, fontWeight: 600,
+        margin: '-16px 0 -28px',
+      }}>
+        <BadgePercent size={15} />
+        Free shipping on orders over $75 · Live arrival guarantee on all fish
+      </div>
+
       {/* Toast */}
       {toast && (
         <div style={{
@@ -58,8 +70,8 @@ export default function ShopHome() {
 
       {/* Hero */}
       <div style={{
-        borderRadius: 24, overflow: 'hidden', position: 'relative',
-        background: 'linear-gradient(135deg, #0a1628 0%, #0d2b52 50%, #0a3d6e 100%)',
+        borderRadius: 20, overflow: 'hidden', position: 'relative',
+        background: 'linear-gradient(135deg, #16150F 0%, #23221A 65%, #2C2A1F 100%)',
         padding: '60px 56px', color: 'white',
         minHeight: 280, display: 'flex', flexDirection: 'column', justifyContent: 'center',
       }}>
@@ -75,9 +87,9 @@ export default function ShopHome() {
         <div style={{ position: 'relative', zIndex: 1 }}>
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
-            background: 'rgba(0,113,227,0.4)', borderRadius: 20, padding: '4px 14px',
-            fontSize: 12, fontWeight: 600, marginBottom: 16, color: '#7eb8ff',
-            border: '1px solid rgba(0,113,227,0.5)',
+            background: 'rgba(255,255,255,0.10)', borderRadius: 20, padding: '5px 14px',
+            fontSize: 12, fontWeight: 600, marginBottom: 16, color: 'rgba(247,245,241,0.88)',
+            border: '1px solid rgba(255,255,255,0.16)',
           }}>
             <Fish size={12} /> New arrivals weekly
           </div>
@@ -88,17 +100,24 @@ export default function ShopHome() {
             Discover premium fish, plants, tanks, and equipment — all in one place.
           </p>
           <div style={{ display: 'flex', gap: 12 }}>
-            <button className="btn-primary" onClick={() => navigate('/shop/browse')}>
+            <button
+              onClick={() => navigate('/shop/browse')}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 7,
+                padding: '0 22px', height: 42, borderRadius: 12, border: 'none',
+                background: 'white', color: 'var(--ink)', cursor: 'pointer',
+                fontSize: 13.5, fontWeight: 700, fontFamily: 'inherit',
+              }}>
               Shop Now <ArrowRight size={14} />
             </button>
             <button
               onClick={() => navigate('/shop/builder')}
               style={{
-                display: 'flex', alignItems: 'center', gap: 6,
-                padding: '0 20px', height: 38, borderRadius: 9999,
-                border: '1px solid rgba(255,255,255,0.3)',
-                background: 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer',
-                fontSize: 13, fontWeight: 600,
+                display: 'flex', alignItems: 'center', gap: 7,
+                padding: '0 22px', height: 42, borderRadius: 12,
+                border: '1px solid rgba(255,255,255,0.25)',
+                background: 'rgba(255,255,255,0.08)', color: 'white', cursor: 'pointer',
+                fontSize: 13.5, fontWeight: 700, fontFamily: 'inherit',
                 transition: 'background 0.15s',
               }}>
               <Waves size={14} /> Build Aquarium
@@ -151,7 +170,7 @@ export default function ShopHome() {
             Featured Products
           </h2>
           <button onClick={() => navigate('/shop/browse')}
-            style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#0071e3', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 500 }}>
+            style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#16150F', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 500 }}>
             View all <ArrowRight size={13} />
           </button>
         </div>
@@ -161,60 +180,67 @@ export default function ShopHome() {
           ))}
         </div>
       </div>
-    </div>
-  )
-}
 
-function ProductCard({ product: p, onAdd, loading }) {
-  const TYPE_COLOR = { FISH: '#0071e3', PLANT: '#34c759', TANK: '#32ade6', EQUIPMENT: '#bf5af2', DECORATION: '#ff9500' }
-  const color = TYPE_COLOR[p.PRODUCT_TYPE] ?? '#8e8e93'
-  const inStock = (p.QTY_ON_HAND ?? 0) > 0
-
-  return (
-    <div className="card" style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-      {/* Color band */}
-      <div style={{ height: 6, background: color }} />
-      <div style={{ padding: '18px 18px 16px', display: 'flex', flexDirection: 'column', flex: 1, gap: 12 }}>
-        <div>
-          <div style={{ fontSize: 11, fontWeight: 600, color: color, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>
-            {p.PRODUCT_TYPE}
+      {/* Builder CTA */}
+      <div style={{
+        borderRadius: 24, overflow: 'hidden', position: 'relative',
+        background: 'linear-gradient(120deg, #11312B 0%, #1A4A3F 70%, #205A4B 100%)',
+        padding: '48px 56px', color: 'white',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 32,
+      }}>
+        <div style={{ maxWidth: 480 }}>
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8,
+            background: 'rgba(255,255,255,0.12)', borderRadius: 20, padding: '4px 14px',
+            fontSize: 12, fontWeight: 600, marginBottom: 14,
+          }}>
+            <Waves size={12} /> Aquarium Builder
           </div>
-          <div style={{ fontSize: 14, fontWeight: 700, color: '#1d1d1f', lineHeight: 1.3 }}>{p.PRODUCT_NAME}</div>
-          {p.DESCRIPTION && (
-            <div style={{ fontSize: 12, color: '#8e8e93', marginTop: 4, lineHeight: 1.5,
-              display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-              {p.DESCRIPTION}
-            </div>
-          )}
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }}>
-          <div>
-            <div style={{ fontSize: 18, fontWeight: 700, color: '#1d1d1f', letterSpacing: '-0.02em' }}>
-              ${Number(p.UNIT_PRICE).toFixed(2)}
-            </div>
-            <div style={{ fontSize: 11, color: inStock ? '#34c759' : '#ff3b30', fontWeight: 500 }}>
-              {inStock ? `${p.QTY_ON_HAND} in stock` : 'Out of stock'}
-            </div>
-          </div>
-          <button
-            onClick={() => onAdd(p)}
-            disabled={!inStock || loading}
+          <h2 style={{ margin: 0, fontSize: 30, fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.15 }}>
+            Design your dream tank, piece by piece.
+          </h2>
+          <p style={{ margin: '12px 0 24px', fontSize: 14.5, color: 'rgba(255,255,255,0.7)', lineHeight: 1.6 }}>
+            Pick a tank, add fish, plants and equipment — our compatibility engine checks water type,
+            temperature and capacity so everything you choose lives happily together.
+          </p>
+          <button onClick={() => navigate('/shop/builder')}
             style={{
-              display: 'flex', alignItems: 'center', gap: 6,
-              padding: '0 14px', height: 34, borderRadius: 9999, border: 'none',
-              background: !inStock ? '#e5e5ea' : '#0071e3',
-              color: !inStock ? '#aeaeb2' : 'white',
-              cursor: !inStock ? 'not-allowed' : 'pointer',
-              fontSize: 12, fontWeight: 600,
-              transition: 'background 0.15s, box-shadow 0.15s, opacity 0.12s',
-              opacity: loading ? 0.6 : 1,
-              boxShadow: inStock ? '0 2px 8px rgba(0,113,227,0.38)' : 'none',
-              flexShrink: 0,
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              padding: '0 22px', height: 40, borderRadius: 9999, border: 'none',
+              background: 'white', color: '#1A4A3F', cursor: 'pointer',
+              fontSize: 13.5, fontWeight: 700,
             }}>
-            <ShoppingCart size={13} />
-            {loading ? '…' : 'Add'}
+            Start Building <ArrowRight size={14} />
           </button>
         </div>
+        <Waves size={140} style={{ opacity: 0.15, flexShrink: 0 }} />
+      </div>
+
+      {/* Value props */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 8 }}>
+        {[
+          { icon: Truck,          title: 'Fast Delivery',        text: 'Careful packaging, quick dispatch' },
+          { icon: ShieldCheck,    title: 'Live Arrival Promise', text: 'Every fish arrives healthy — guaranteed' },
+          { icon: HeartHandshake, title: 'Expert Support',       text: 'Real aquarists answer your questions' },
+          { icon: BadgePercent,   title: 'Fair Prices',          text: 'Quality livestock without the markup' },
+        ].map(({ icon: Icon, title, text }) => (
+          <div key={title} style={{
+            background: 'white', borderRadius: 16, padding: '20px 18px',
+            border: '1px solid rgba(0,0,0,0.04)', boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+            display: 'flex', flexDirection: 'column', gap: 10,
+          }}>
+            <div style={{
+              width: 38, height: 38, borderRadius: 11, background: 'var(--chip-teal)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <Icon size={18} color="#2A6B60" strokeWidth={1.9} />
+            </div>
+            <div>
+              <div style={{ fontSize: 13.5, fontWeight: 700, color: '#1d1d1f' }}>{title}</div>
+              <div style={{ fontSize: 12, color: '#8e8e93', marginTop: 3, lineHeight: 1.5 }}>{text}</div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   )

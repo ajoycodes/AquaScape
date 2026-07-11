@@ -92,12 +92,12 @@ export default function ShopCart() {
             width: 64, height: 64, borderRadius: '50%', background: '#e8f8ee',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            <Package size={28} color="#34c759" />
+            <Package size={28} color="#1F7A45" />
           </div>
           <div>
             <div style={{ fontSize: 20, fontWeight: 700, color: '#1d1d1f', marginBottom: 6 }}>Order Placed!</div>
             <div style={{ fontSize: 13, color: '#8e8e93' }}>
-              Your order <span style={{ fontFamily: 'monospace', color: '#0071e3', fontWeight: 600 }}>#{success}</span> has been confirmed.
+              Your order <span style={{ fontFamily: 'monospace', color: '#16150F', fontWeight: 600 }}>#{success}</span> has been confirmed.
             </div>
           </div>
           <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
@@ -133,7 +133,7 @@ export default function ShopCart() {
             {items.map(item => (
               <div key={item.CART_ITEM_ID} className="card" style={{ padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 16 }}>
                 <div style={{
-                  width: 42, height: 42, borderRadius: 12, background: '#f5f5f7',
+                  width: 42, height: 42, borderRadius: 12, background: 'var(--bg)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                 }}>
                   <Package size={20} color="#8e8e93" />
@@ -212,7 +212,7 @@ export default function ShopCart() {
                 rows={2}
                 style={{
                   width: '100%', boxSizing: 'border-box', resize: 'none',
-                  background: '#f5f5f7', border: '1px solid #d1d1d6',
+                  background: 'var(--bg)', border: '1px solid #d1d1d6',
                   borderRadius: 10, padding: '8px 10px', fontSize: 13,
                   color: '#1d1d1f', outline: 'none', fontFamily: 'inherit',
                 }}

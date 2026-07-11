@@ -83,7 +83,7 @@ export default function ShopProduct() {
         style={{
           display: 'flex', alignItems: 'center', gap: 6,
           background: 'none', border: 'none', cursor: 'pointer',
-          fontSize: 13, color: '#0071e3', fontWeight: 500, padding: 0, alignSelf: 'flex-start',
+          fontSize: 13, color: '#16150F', fontWeight: 500, padding: 0, alignSelf: 'flex-start',
         }}>
         <ArrowLeft size={15} /> Back
       </button>
@@ -114,7 +114,7 @@ export default function ShopProduct() {
             )}
           </div>
 
-          <div style={{ fontSize: 32, fontWeight: 700, color: '#0071e3', letterSpacing: '-0.03em' }}>
+          <div style={{ fontSize: 32, fontWeight: 700, color: '#16150F', letterSpacing: '-0.03em' }}>
             ${Number(product.UNIT_PRICE).toFixed(2)}
           </div>
 
@@ -128,7 +128,7 @@ export default function ShopProduct() {
               product.CATEGORY_NAME && { icon: Info,       label: 'Category',    value: product.CATEGORY_NAME },
             ].filter(Boolean).map(({ icon: Icon, label, value }) => (
               <div key={label} style={{
-                background: '#f5f5f7', borderRadius: 10, padding: '10px 14px',
+                background: 'var(--bg)', borderRadius: 10, padding: '10px 14px',
                 display: 'flex', alignItems: 'flex-start', gap: 10,
               }}>
                 <Icon size={15} color="#8e8e93" style={{ marginTop: 2, flexShrink: 0 }} />
@@ -155,7 +155,7 @@ export default function ShopProduct() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <div style={{
               width: 8, height: 8, borderRadius: '50%',
-              background: inStock ? '#34c759' : '#ff3b30',
+              background: inStock ? '#1F7A45' : '#ff3b30',
             }} />
             <span style={{ fontSize: 13, color: inStock ? '#1c7737' : '#c0392b', fontWeight: 500 }}>
               {inStock ? `${stock} in stock` : 'Out of stock'}

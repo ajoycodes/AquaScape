@@ -2,15 +2,16 @@ import { useEffect, useState, useCallback } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { getProducts, addToCart } from '../../api/client'
 import { useShop } from '../../context/ShopContext'
-import { Search, ShoppingCart, Fish, Leaf, Box, Zap, Gem, SlidersHorizontal } from 'lucide-react'
+import { Search, SlidersHorizontal } from 'lucide-react'
+import ProductCard from '../../components/ProductCard'
 
 const TYPE_CONFIG = {
-  ALL:         { label: 'All',         color: '#1d1d1f', bg: '#e5e5ea' },
-  FISH:        { label: 'Fish',        color: '#0071e3', bg: '#e8f2ff' },
-  PLANT:       { label: 'Plants',      color: '#34c759', bg: '#e8f8ee' },
-  TANK:        { label: 'Tanks',       color: '#32ade6', bg: '#e5f5fd' },
-  EQUIPMENT:   { label: 'Equipment',   color: '#bf5af2', bg: '#f5eaff' },
-  DECORATION:  { label: 'Decorations', color: '#ff9500', bg: '#fff4e5' },
+  ALL:         { label: 'All',         color: '#16150F' },
+  FISH:        { label: 'Fish',        color: '#33607E' },
+  PLANT:       { label: 'Plants',      color: '#2A6B60' },
+  TANK:        { label: 'Tanks',       color: '#4A5C6E' },
+  EQUIPMENT:   { label: 'Equipment',   color: '#61548A' },
+  DECORATION:  { label: 'Decorations', color: '#8A6A24' },
 }
 
 const SORT_OPTIONS = [
@@ -22,6 +23,7 @@ const SORT_OPTIONS = [
 ]
 
 export default function ShopBrowse() {
+  const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const { customer, refreshCart } = useShop()
   const [products,  setProducts]  = useState([])
@@ -40,7 +42,7 @@ export default function ShopBrowse() {
   useEffect(() => { load() }, [load])
 
   const handleAdd = async (product) => {
-    if (!customer) { setToast('Please select an account first'); setTimeout(() => setToast(''), 2500); return }
+    if (!customer) { setToast('Please sign in first'); setTimeout(() => setToast(''), 2500); return }
     setAdding(product.PRODUCT_ID)
     try {
       await addToCart(customer.id, { product_id: product.PRODUCT_ID, quantity: 1 })
@@ -96,10 +98,10 @@ export default function ShopBrowse() {
             <button key={type}
               onClick={() => setSearchParams(type === 'ALL' ? {} : { type })}
               style={{
-                padding: '6px 14px', borderRadius: 9999, border: 'none', cursor: 'pointer',
+                padding: '7px 15px', borderRadius: 10, border: 'none', cursor: 'pointer',
                 fontSize: 12, fontWeight: 600, transition: 'all 0.15s',
-                background: activeType === type ? cfg.color : '#e5e5ea',
-                color: activeType === type ? 'white' : '#6e6e73',
+                background: activeType === type ? cfg.color : '#EFEDE6',
+                color: activeType === type ? 'white' : 'var(--text-2)',
               }}>
               {cfg.label}
             </button>
@@ -128,88 +130,14 @@ export default function ShopBrowse() {
           No products found
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 14 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: 14 }}>
           {filtered.map(p => (
-            <BrowseCard key={p.PRODUCT_ID} product={p} onAdd={handleAdd} loading={adding === p.PRODUCT_ID} />
+            <ProductCard key={p.PRODUCT_ID} product={p} onAdd={handleAdd}
+              onOpen={() => navigate(`/shop/product/${p.PRODUCT_ID}`)}
+              loading={adding === p.PRODUCT_ID} />
           ))}
         </div>
       )}
-    </div>
-  )
-}
-
-function BrowseCard({ product: p, onAdd, loading }) {
-  const navigate    = useNavigate()
-  const TYPE_COLOR  = { FISH: '#0071e3', PLANT: '#34c759', TANK: '#32ade6', EQUIPMENT: '#bf5af2', DECORATION: '#ff9500' }
-  const color   = TYPE_COLOR[p.PRODUCT_TYPE] ?? '#8e8e93'
-  const inStock = (p.QTY_ON_HAND ?? 0) > 0
-
-  return (
-    <div className="card" style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column',
-      transition: 'transform 0.15s, box-shadow 0.15s' }}
-      onMouseEnter={e => {
-        e.currentTarget.style.transform = 'translateY(-2px)'
-        e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.10)'
-      }}
-      onMouseLeave={e => {
-        e.currentTarget.style.transform = 'translateY(0)'
-        e.currentTarget.style.boxShadow = ''
-      }}>
-      {/* Color band top */}
-      <div style={{ height: 4, background: color }} />
-
-      <div style={{ padding: '14px 14px 12px', display: 'flex', flexDirection: 'column', flex: 1, gap: 10 }}>
-        <div>
-          <span style={{
-            display: 'inline-block', fontSize: 10, fontWeight: 700, color,
-            textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 5,
-          }}>
-            {p.PRODUCT_TYPE}
-          </span>
-          <div
-            onClick={() => navigate(`/shop/product/${p.PRODUCT_ID}`)}
-            style={{ fontSize: 13, fontWeight: 700, color: '#1d1d1f', lineHeight: 1.3, marginBottom: 4, cursor: 'pointer' }}
-            title="View details">
-            {p.PRODUCT_NAME}
-          </div>
-          {p.DESCRIPTION && (
-            <div style={{
-              fontSize: 11, color: '#8e8e93', lineHeight: 1.5,
-              display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
-            }}>
-              {p.DESCRIPTION}
-            </div>
-          )}
-        </div>
-
-        <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: 17, fontWeight: 700, color: '#1d1d1f' }}>
-              ${Number(p.UNIT_PRICE).toFixed(2)}
-            </span>
-            <span style={{ fontSize: 11, color: inStock ? '#34c759' : '#ff3b30', fontWeight: 500 }}>
-              {inStock ? `${p.QTY_ON_HAND} avail.` : 'Out of stock'}
-            </span>
-          </div>
-          <button
-            onClick={() => onAdd(p)}
-            disabled={!inStock || loading}
-            style={{
-              width: '100%', height: 36, borderRadius: 9999, border: 'none',
-              background: !inStock ? '#e5e5ea' : '#0071e3',
-              color: !inStock ? '#aeaeb2' : 'white',
-              cursor: !inStock ? 'not-allowed' : 'pointer',
-              fontSize: 12, fontWeight: 600,
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-              opacity: loading ? 0.6 : 1,
-              transition: 'background 0.15s, box-shadow 0.15s, opacity 0.12s',
-              boxShadow: inStock ? '0 2px 8px rgba(0,113,227,0.38)' : 'none',
-            }}>
-            <ShoppingCart size={12} />
-            {loading ? 'Adding…' : 'Add to Cart'}
-          </button>
-        </div>
-      </div>
     </div>
   )
 }
