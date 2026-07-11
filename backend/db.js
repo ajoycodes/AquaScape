@@ -59,4 +59,19 @@ export async function callProc(sql, binds = {}) {
   }
 }
 
+// Turns a raw Oracle error into { message, oraCode } — keeps only the human
+// text of the first ORA-2xxxx application error, drops the PL/SQL stack.
+export function oraFriendly(err) {
+  const raw = err?.message || ''
+  const m = raw.match(/ORA-(20\d{3}):\s*(?:DB TRIGGER BLOCKED:\s*)?([\s\S]*?)(?=\s*ORA-\d{5}|\s*Help:|$)/)
+  if (!m) return { message: raw, oraCode: null }
+  return { message: m[2].trim().replace(/\s+/g, ' '), oraCode: Number(m[1]) }
+}
+
+// Compatibility rule violations raised by builder procedures (-20010..-20023)
+// and validation triggers (-20200..-20299)
+export function isCompatibilityError(oraCode) {
+  return oraCode !== null && ((oraCode >= 20010 && oraCode <= 20023) || (oraCode >= 20200 && oraCode <= 20299))
+}
+
 export { oracledb }

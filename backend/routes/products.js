@@ -9,7 +9,7 @@ router.get('/', async (req, res) => {
     const { type, category_id, search, limit = 100 } = req.query
     let sql = `SELECT p.product_id, p.product_name, p.product_type, p.sku,
                       p.unit_price, p.cost_price, p.description, p.image_url,
-                      c.category_name,
+                      p.is_active, c.category_name,
                       NVL(i.qty_on_hand, 0)   AS qty_on_hand,
                       NVL(i.qty_reserved, 0)  AS qty_reserved,
                       (NVL(i.qty_on_hand,0) - NVL(i.qty_reserved,0)) AS qty_available

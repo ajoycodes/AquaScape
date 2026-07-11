@@ -1,7 +1,16 @@
 import { Router } from 'express'
-import { query, execute, callProc, oracledb } from '../db.js'
+import { query, execute, callProc, oracledb, oraFriendly, isCompatibilityError } from '../db.js'
 
 const router = Router()
+
+// Send Oracle errors as clean messages; tag compatibility-rule violations
+function sendOraError(res, e, status = 422) {
+  const { message, oraCode } = oraFriendly(e)
+  res.status(status).json({
+    error: message,
+    ...(isCompatibilityError(oraCode) ? { code: 'COMPATIBILITY' } : {}),
+  })
+}
 
 // GET /api/v1/builder/setups
 router.get('/setups', async (req, res) => {
@@ -73,7 +82,7 @@ router.post('/setup', async (req, res) => {
       }
     )
     res.status(201).json({ setup_id: out.sid, message: 'Setup created' })
-  } catch (e) { res.status(422).json({ error: e.message }) }
+  } catch (e) { sendOraError(res, e) }
 })
 
 // POST /api/v1/builder/setup/:id/item
@@ -86,7 +95,7 @@ router.post('/setup/:id/item', async (req, res) => {
       { sid: Number(req.params.id), pid: Number(product_id), type: item_type.toUpperCase(), qty: Number(quantity) }
     )
     res.json({ message: 'Item added to setup' })
-  } catch (e) { res.status(422).json({ error: e.message }) }
+  } catch (e) { sendOraError(res, e) }
 })
 
 // DELETE /api/v1/builder/setup/:id/item/:pid
@@ -97,7 +106,7 @@ router.delete('/setup/:id/item/:pid', async (req, res) => {
       { sid: Number(req.params.id), pid: Number(req.params.pid) }
     )
     res.json({ message: 'Item removed' })
-  } catch (e) { res.status(422).json({ error: e.message }) }
+  } catch (e) { sendOraError(res, e) }
 })
 
 // GET /api/v1/builder/setup/:id/validate
@@ -116,8 +125,55 @@ router.get('/setup/:id/validate', async (req, res) => {
     const capacity_ok = Boolean(capOut.result)
     const water_ok    = Boolean(waterOut.result)
     const temp_ok     = Boolean(tempOut.result)
-    res.json({ capacity_ok, water_ok, temp_ok, all_valid: capacity_ok && water_ok && temp_ok })
-  } catch (e) { res.status(422).json({ error: e.message }) }
+
+    // Name the exact items behind a failed check so the UI can explain itself
+    const issues = []
+    if (!water_ok) {
+      const rows = await query(
+        `SELECT p.product_name, f.water_type AS required
+         FROM setup_items si
+         JOIN fish f     ON f.product_id = si.product_id
+         JOIN products p ON p.product_id = si.product_id
+         JOIN aquarium_setups s ON s.setup_id = si.setup_id
+         WHERE si.setup_id = :sid AND f.water_type <> s.water_type
+         UNION ALL
+         SELECT p.product_name, pl.water_type
+         FROM setup_items si
+         JOIN plants pl   ON pl.product_id = si.product_id
+         JOIN products p  ON p.product_id = si.product_id
+         JOIN aquarium_setups s ON s.setup_id = si.setup_id
+         WHERE si.setup_id = :sid AND pl.water_type <> s.water_type
+         UNION ALL
+         SELECT p.product_name, d.safe_water_type
+         FROM setup_items si
+         JOIN decorations d ON d.product_id = si.product_id
+         JOIN products p    ON p.product_id = si.product_id
+         JOIN aquarium_setups s ON s.setup_id = si.setup_id
+         WHERE si.setup_id = :sid
+           AND d.safe_water_type IS NOT NULL
+           AND d.safe_water_type <> 'BOTH'
+           AND d.safe_water_type <> s.water_type`,
+        { sid: id }
+      )
+      rows.forEach(r => issues.push({ check: 'water', product: r.PRODUCT_NAME, detail: `needs ${r.REQUIRED} water` }))
+    }
+    if (!temp_ok) {
+      const rows = await query(
+        `SELECT p.product_name, f.min_temp_c, f.max_temp_c
+         FROM setup_items si
+         JOIN fish f     ON f.product_id = si.product_id
+         JOIN products p ON p.product_id = si.product_id
+         JOIN aquarium_setups s ON s.setup_id = si.setup_id
+         WHERE si.setup_id = :sid
+           AND s.target_temp_c IS NOT NULL
+           AND (s.target_temp_c < f.min_temp_c OR s.target_temp_c > f.max_temp_c)`,
+        { sid: id }
+      )
+      rows.forEach(r => issues.push({ check: 'temperature', product: r.PRODUCT_NAME, detail: `lives at ${r.MIN_TEMP_C}–${r.MAX_TEMP_C}°C` }))
+    }
+
+    res.json({ capacity_ok, water_ok, temp_ok, all_valid: capacity_ok && water_ok && temp_ok, issues })
+  } catch (e) { sendOraError(res, e) }
 })
 
 // GET /api/v1/builder/setup/:id/price
@@ -128,7 +184,7 @@ router.get('/setup/:id/price', async (req, res) => {
       { result: { dir: oracledb.BIND_OUT, type: oracledb.NUMBER }, sid: Number(req.params.id) }
     )
     res.json({ setup_id: Number(req.params.id), total_price: out.result ?? 0 })
-  } catch (e) { res.status(422).json({ error: e.message }) }
+  } catch (e) { sendOraError(res, e) }
 })
 
 // POST /api/v1/builder/setup/:id/save
@@ -147,7 +203,7 @@ router.post('/setup/:id/save', async (req, res) => {
       }
     )
     res.json({ saved_id: out.saved, message: 'Setup saved' })
-  } catch (e) { res.status(422).json({ error: e.message }) }
+  } catch (e) { sendOraError(res, e) }
 })
 
 // GET /api/v1/builder/tanks  — returns tank products with their actual TANK_ID
@@ -194,7 +250,7 @@ router.post('/compatibility', async (req, res) => {
         sev: severity, reason: reason || null, uid: created_by ? Number(created_by) : null }
     )
     res.status(201).json({ message: 'Compatibility rule added' })
-  } catch (e) { res.status(422).json({ error: e.message }) }
+  } catch (e) { sendOraError(res, e) }
 })
 
 export default router
