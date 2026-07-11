@@ -1,7 +1,7 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AuthProvider }  from './context/AuthContext'
 import { ToastProvider } from './context/ToastContext'
-import { ShopProvider }  from './context/ShopContext'
+import { ShopProvider, useShop } from './context/ShopContext'
 import AdminLayout from './layouts/AdminLayout'
 import ShopLayout  from './layouts/ShopLayout'
 
@@ -23,6 +23,15 @@ import ShopCart    from './pages/shop/ShopCart'
 import ShopOrders  from './pages/shop/ShopOrders'
 import ShopBuilder from './pages/shop/ShopBuilder'
 import ShopProduct from './pages/shop/ShopProduct'
+import ShopAuth    from './pages/shop/ShopAuth'
+
+// Gate for pages that need a signed-in customer
+function RequireCustomer({ children }) {
+  const { customer } = useShop()
+  const location = useLocation()
+  if (!customer) return <Navigate to="/shop/login" state={{ from: location.pathname }} replace />
+  return children
+}
 
 export default function App() {
   return (
@@ -30,12 +39,14 @@ export default function App() {
       <ToastProvider>
         <ShopProvider>
           <Routes>
-            {/* Auth */}
+            {/* Landing → customer storefront */}
+            <Route path="/" element={<Navigate to="/shop" replace />} />
+
+            {/* Admin auth */}
             <Route path="/login" element={<Login />} />
 
             {/* Admin panel — protected by AdminLayout which checks auth */}
             <Route element={<AdminLayout />}>
-              <Route index element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard"        element={<Dashboard />} />
               <Route path="/products"         element={<ProductCatalog />} />
               <Route path="/builder"          element={<AquariumBuilder />} />
@@ -50,12 +61,14 @@ export default function App() {
 
             {/* Customer storefront */}
             <Route path="/shop" element={<ShopLayout />}>
-              <Route index  element={<ShopHome />} />
-              <Route path="browse"  element={<ShopBrowse />} />
-              <Route path="cart"    element={<ShopCart />} />
-              <Route path="orders"  element={<ShopOrders />} />
-              <Route path="builder"       element={<ShopBuilder />} />
-              <Route path="product/:id"  element={<ShopProduct />} />
+              <Route index element={<ShopHome />} />
+              <Route path="browse"      element={<ShopBrowse />} />
+              <Route path="product/:id" element={<ShopProduct />} />
+              <Route path="login"       element={<ShopAuth mode="login" />} />
+              <Route path="register"    element={<ShopAuth mode="register" />} />
+              <Route path="cart"    element={<RequireCustomer><ShopCart /></RequireCustomer>} />
+              <Route path="orders"  element={<RequireCustomer><ShopOrders /></RequireCustomer>} />
+              <Route path="builder" element={<RequireCustomer><ShopBuilder /></RequireCustomer>} />
             </Route>
           </Routes>
         </ShopProvider>

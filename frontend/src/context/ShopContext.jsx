@@ -1,18 +1,40 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
-import { getCart } from '../api/client'
+import { getCart, authLogin, authRegister } from '../api/client'
 
 const ShopContext = createContext(null)
 
 export function ShopProvider({ children }) {
-  const [customer, setCustomerState] = useState(() => {
+  const [customer, setCustomer] = useState(() => {
     try { return JSON.parse(localStorage.getItem('aq_customer')) } catch { return null }
   })
   const [cartCount, setCartCount] = useState(0)
 
-  const setCustomer = (c) => {
-    setCustomerState(c)
-    if (c) localStorage.setItem('aq_customer', JSON.stringify(c))
-    else    localStorage.removeItem('aq_customer')
+  const persist = (cust, token) => {
+    setCustomer(cust)
+    if (cust) {
+      localStorage.setItem('aq_customer', JSON.stringify(cust))
+      localStorage.setItem('aq_token', token)
+    } else {
+      localStorage.removeItem('aq_customer')
+      localStorage.removeItem('aq_token')
+    }
+  }
+
+  const login = async (email, password) => {
+    const r = await authLogin({ email, password })
+    persist(r.data.customer, r.data.token)
+    return r.data.customer
+  }
+
+  const register = async (form) => {
+    const r = await authRegister(form)
+    persist(r.data.customer, r.data.token)
+    return r.data.customer
+  }
+
+  const logout = () => {
+    persist(null, null)
+    setCartCount(0)
   }
 
   const refreshCart = useCallback(async () => {
@@ -26,7 +48,7 @@ export function ShopProvider({ children }) {
   useEffect(() => { refreshCart() }, [refreshCart])
 
   return (
-    <ShopContext.Provider value={{ customer, setCustomer, cartCount, refreshCart }}>
+    <ShopContext.Provider value={{ customer, login, register, logout, cartCount, refreshCart }}>
       {children}
     </ShopContext.Provider>
   )

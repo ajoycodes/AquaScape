@@ -6,14 +6,29 @@ const api = axios.create({
   timeout: 15000,
 })
 
+api.interceptors.request.use(config => {
+  const token = localStorage.getItem('aq_token') || localStorage.getItem('aq_admin_token')
+  if (token) config.headers.Authorization = `Bearer ${token}`
+  return config
+})
+
 api.interceptors.response.use(
   res => res,
   err => {
     const msg = err.response?.data?.error || err.message || 'Request failed'
     console.error('[AquaScape API]', msg)
-    return Promise.reject(new Error(msg))
+    const e = new Error(msg)
+    e.code = err.response?.data?.code   // e.g. 'COMPATIBILITY' for builder rule blocks
+    e.status = err.response?.status
+    return Promise.reject(e)
   }
 )
+
+// ── Auth ──────────────────────────────────────────────────────────────────
+export const authLogin      = data => api.post('/auth/login', data)
+export const authRegister   = data => api.post('/auth/register', data)
+export const authAdminLogin = data => api.post('/auth/admin/login', data)
+export const authMe         = ()   => api.get('/auth/me')
 
 // ── Products ─────────────────────────────────────────────────────────────
 export const getProducts    = (params = {}) => api.get('/products', { params })

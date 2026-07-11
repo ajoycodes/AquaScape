@@ -1,33 +1,25 @@
 import { createContext, useContext, useState } from 'react'
+import { authAdminLogin } from '../api/client'
 
-// Simple demo auth — no backend session, just localStorage
-// Admin: username=admin, password=admin
-// Stores: { id, name, role: 'admin' }
-
+// Admin auth — validated against the USERS table via POST /auth/admin/login
 const AuthContext = createContext(null)
-
-const ADMIN_CREDENTIALS = { username: 'admin', password: 'admin' }
-const ADMIN_USER = { id: 1, name: 'Admin', role: 'admin' }
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     try { return JSON.parse(localStorage.getItem('aq_admin_user')) } catch { return null }
   })
 
-  const loginAdmin = (username, password) => {
-    if (
-      username.toLowerCase() === ADMIN_CREDENTIALS.username &&
-      password === ADMIN_CREDENTIALS.password
-    ) {
-      localStorage.setItem('aq_admin_user', JSON.stringify(ADMIN_USER))
-      setUser(ADMIN_USER)
-      return true
-    }
-    return false
+  const loginAdmin = async (username, password) => {
+    const r = await authAdminLogin({ username, password })
+    localStorage.setItem('aq_admin_user', JSON.stringify(r.data.user))
+    localStorage.setItem('aq_admin_token', r.data.token)
+    setUser(r.data.user)
+    return r.data.user
   }
 
   const logout = () => {
     localStorage.removeItem('aq_admin_user')
+    localStorage.removeItem('aq_admin_token')
     setUser(null)
   }
 

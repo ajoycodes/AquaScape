@@ -13,15 +13,17 @@ export default function Login() {
 
   if (user) return <Navigate to="/dashboard" replace />
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault()
     setLoading(true)
     setError('')
-    setTimeout(() => {
-      const ok = loginAdmin(username, password)
-      if (ok) navigate('/dashboard', { replace: true })
-      else   { setError('Invalid username or password'); setLoading(false) }
-    }, 300) // tiny delay for UX feel
+    try {
+      await loginAdmin(username, password)
+      navigate('/dashboard', { replace: true })
+    } catch (err) {
+      setError(err.message || 'Invalid username or password')
+      setLoading(false)
+    }
   }
 
   return (
