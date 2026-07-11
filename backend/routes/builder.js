@@ -87,15 +87,44 @@ router.post('/setup', async (req, res) => {
 
 // POST /api/v1/builder/setup/:id/item
 router.post('/setup/:id/item', async (req, res) => {
+  const { product_id, item_type, quantity = 1 } = req.body
   try {
-    const { product_id, item_type, quantity = 1 } = req.body
     if (!product_id || !item_type) return res.status(400).json({ error: 'product_id and item_type required' })
     await callProc(
       `BEGIN add_item_to_setup(:sid,:pid,:type,:qty,NULL); END;`,
       { sid: Number(req.params.id), pid: Number(product_id), type: item_type.toUpperCase(), qty: Number(quantity) }
     )
     res.json({ message: 'Item added to setup' })
-  } catch (e) { sendOraError(res, e) }
+  } catch (e) {
+    // Pairwise rule block — replace the generic count message with the
+    // actual rule: which existing item conflicts, and why
+    if (/compatibility conflict/i.test(e.message)) {
+      try {
+        const rows = await query(
+          `SELECT pa.product_name AS new_product, pb.product_name AS existing_product, cr.reason
+           FROM compatibility_rules cr
+           JOIN products pa ON pa.product_id = :pid
+           JOIN products pb ON pb.product_id = CASE WHEN cr.product_id_a = :pid THEN cr.product_id_b ELSE cr.product_id_a END
+           WHERE cr.severity = 'ERROR'
+             AND (cr.product_id_a = :pid OR cr.product_id_b = :pid)
+             AND EXISTS (
+               SELECT 1 FROM setup_items si
+               WHERE si.setup_id = :sid
+                 AND si.product_id = CASE WHEN cr.product_id_a = :pid THEN cr.product_id_b ELSE cr.product_id_a END
+             )`,
+          { pid: Number(product_id), sid: Number(req.params.id) }
+        )
+        if (rows.length > 0) {
+          const r = rows[0]
+          return res.status(422).json({
+            error: `${r.NEW_PRODUCT} can't live with ${r.EXISTING_PRODUCT} — ${r.REASON}`,
+            code: 'COMPATIBILITY',
+          })
+        }
+      } catch { /* fall through to generic handler */ }
+    }
+    sendOraError(res, e)
+  }
 })
 
 // DELETE /api/v1/builder/setup/:id/item/:pid
@@ -170,6 +199,20 @@ router.get('/setup/:id/validate', async (req, res) => {
         { sid: id }
       )
       rows.forEach(r => issues.push({ check: 'temperature', product: r.PRODUCT_NAME, detail: `lives at ${r.MIN_TEMP_C}–${r.MAX_TEMP_C}°C` }))
+    }
+    if (!capacity_ok) {
+      const rows = await query(
+        `SELECT p.product_name, f.min_tank_liters, t.volume_liters
+         FROM setup_items si
+         JOIN fish f     ON f.product_id = si.product_id
+         JOIN products p ON p.product_id = si.product_id
+         JOIN aquarium_setups s ON s.setup_id = si.setup_id
+         JOIN tanks t    ON t.tank_id = s.tank_id
+         WHERE si.setup_id = :sid
+           AND f.min_tank_liters > t.volume_liters`,
+        { sid: id }
+      )
+      rows.forEach(r => issues.push({ check: 'capacity', product: r.PRODUCT_NAME, detail: `needs a ${r.MIN_TANK_LITERS}L+ tank (yours is ${r.VOLUME_LITERS}L)` }))
     }
 
     res.json({ capacity_ok, water_ok, temp_ok, all_valid: capacity_ok && water_ok && temp_ok, issues })

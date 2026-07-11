@@ -458,8 +458,9 @@ export default function ShopBuilder() {
               }}>
                 {validation.issues.map((iss, i) => (
                   <div key={i} style={{ fontSize: 12.5, color: '#a05e10' }}>
-                    <strong>{iss.product}</strong> {iss.detail}, but your setup is {form.water_type}
-                    {form.target_temp_c ? ` at ${form.target_temp_c}°C` : ''}.
+                    <strong>{iss.product}</strong> {iss.detail}
+                    {iss.check === 'water' ? ` — your setup is ${form.water_type}` : ''}
+                    {iss.check === 'temperature' && form.target_temp_c ? ` — your setup runs at ${form.target_temp_c}°C` : ''}.
                   </div>
                 ))}
                 <div style={{ fontSize: 11.5, color: '#c08840', marginTop: 2 }}>
