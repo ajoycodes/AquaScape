@@ -3,6 +3,7 @@ import express from 'express'
 import cors from 'cors'
 import { initPool } from './db.js'
 
+import authRouter, { requireAuth } from './routes/auth.js'
 import productsRouter   from './routes/products.js'
 import inventoryRouter  from './routes/inventory.js'
 import ordersRouter     from './routes/orders.js'
@@ -20,13 +21,14 @@ app.use(express.json())
 
 app.get(`${BASE}/ping`, (_req, res) => res.json({ ok: true, ts: new Date() }))
 
+app.use(`${BASE}/auth`,      authRouter)
 app.use(`${BASE}/products`,  productsRouter)
 app.use(`${BASE}/inventory`, inventoryRouter)
 app.use(`${BASE}/orders`,    ordersRouter)
 app.use(`${BASE}/customers`, customersRouter)
 app.use(`${BASE}/suppliers`, suppliersRouter)
 app.use(`${BASE}/builder`,   builderRouter)
-app.use(`${BASE}/cart`,      cartRouter)
+app.use(`${BASE}/cart`,      requireAuth, cartRouter)
 app.use(`${BASE}/reports`,   reportsRouter)
 
 app.use((_req, res) => res.status(404).json({ error: 'Not found' }))
