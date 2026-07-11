@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getProducts, createSetup, addSetupItem, validateSetup, getSetupPrice, saveSetup } from '../../api/client'
+import { getProducts, getTanks, createSetup, addSetupItem, validateSetup, getSetupPrice, saveSetup, getSetups, getSetup, addToCart } from '../../api/client'
 import { useShop } from '../../context/ShopContext'
-import { Waves, Fish, Leaf, Zap, Gem, Plus, Trash2, CheckCircle, XCircle, ShoppingBag } from 'lucide-react'
+import BuilderAlert from '../../components/BuilderAlert'
+import { Waves, Fish, Leaf, Zap, Gem, Plus, Trash2, CheckCircle, XCircle, ShoppingBag, FolderOpen, ArrowRight } from 'lucide-react'
 
 const WATER_TYPES   = ['FRESHWATER', 'SALTWATER', 'BRACKISH']
 const ITEM_TYPES    = ['FISH', 'PLANT', 'DECORATION', 'EQUIPMENT']
@@ -12,7 +13,10 @@ const ITEM_ICON = { FISH: Fish, PLANT: Leaf, EQUIPMENT: Zap, DECORATION: Gem }
 
 export default function ShopBuilder() {
   const navigate = useNavigate()
-  const { customer } = useShop()
+  const { customer, refreshCart } = useShop()
+  const [view,      setView]      = useState('loading')   // 'loading' | 'list' | 'wizard'
+  const [setups,    setSetups]    = useState([])
+  const [carting,   setCarting]   = useState(null)
   const [step,      setStep]      = useState(0)
   const [tanks,     setTanks]     = useState([])
   const [products,  setProducts]  = useState([])
@@ -28,20 +32,54 @@ export default function ShopBuilder() {
   const [price,      setPrice]      = useState(null)
   const [saving,     setSaving]     = useState(false)
   const [saved,      setSaved]      = useState(false)
-  const [error,      setError]      = useState('')
+  const [error,      setError]      = useState(null)
 
   useEffect(() => {
-    getProducts({ type: 'TANK' }).then(r => setTanks(r.data)).catch(() => {})
+    getTanks().then(r => setTanks(r.data)).catch(() => {})
     getProducts({}).then(r => setProducts(r.data.filter(p => p.PRODUCT_TYPE !== 'TANK'))).catch(() => {})
   }, [])
+
+  const loadSetups = () => {
+    if (!customer) return
+    getSetups(customer.id)
+      .then(r => { setSetups(r.data); setView(r.data.length > 0 ? 'list' : 'wizard') })
+      .catch(() => setView('wizard'))
+  }
+  useEffect(() => { loadSetups() }, [customer])
+
+  const startNewSetup = () => {
+    setForm({ tank_id: '', setup_name: '', water_type: 'FRESHWATER', target_temp_c: 25, target_ph: 7.0 })
+    setItems([]); setSetupId(null); setStep(0); setSaved(false); setError(null)
+    setView('wizard')
+  }
+
+  // Put the tank + every setup item into the shopping cart
+  const addSetupToCart = async (sid) => {
+    setCarting(sid)
+    setError(null)
+    try {
+      const detail = (await getSetup(sid)).data
+      const tank = tanks.find(t => t.TANK_ID === detail.TANK_ID)
+      if (tank) await addToCart(customer.id, { product_id: tank.PRODUCT_ID, quantity: 1 })
+      for (const it of (detail.items ?? [])) {
+        await addToCart(customer.id, { product_id: it.PRODUCT_ID, quantity: it.QUANTITY })
+      }
+      await refreshCart()
+      navigate('/shop/cart')
+    } catch (e) {
+      setError(e)
+    } finally {
+      setCarting(null)
+    }
+  }
 
   const setF = (k, v) => setForm(f => ({ ...f, [k]: v }))
 
   // Step 0: pick tank
   const handleTankNext = async () => {
-    if (!form.tank_id || !form.setup_name) { setError('Please fill in all fields'); return }
-    if (!customer) { setError('Please select an account first'); return }
-    setError('')
+    if (!form.tank_id || !form.setup_name) { setError({ message: 'Please fill in all fields' }); return }
+    if (!customer) { setError({ message: 'Please sign in first' }); return }
+    setError(null)
     try {
       const r = await createSetup({
         customer_id:    customer.id,
@@ -54,55 +92,63 @@ export default function ShopBuilder() {
       setSetupId(r.data.setup_id)
       setStep(1)
     } catch (e) {
-      setError(e.response?.data?.error ?? e.message)
+      setError(e)
     }
   }
 
   // Step 1: already captured in form during step 0 (params are set with tank)
   // jump to stock directly
-  const goToStock = () => { setError(''); setStep(2) }
+  const goToStock = () => { setError(null); setStep(2) }
 
   // Step 2: add items
   const handleAddItem = async () => {
-    if (!addForm.product_id) { setError('Select a product'); return }
-    setError('')
+    if (!addForm.product_id) { setError({ message: 'Select a product' }); return }
+    setError(null)
+    // item_type always comes from the product itself — never user-selected
+    const p = products.find(x => x.PRODUCT_ID === Number(addForm.product_id))
+    const itemType = p?.PRODUCT_TYPE ?? 'FISH'
     try {
       await addSetupItem(setupId, {
         product_id: Number(addForm.product_id),
-        item_type:  addForm.item_type,
+        item_type:  itemType,
         quantity:   Number(addForm.quantity),
       })
-      const p = products.find(x => x.PRODUCT_ID === Number(addForm.product_id))
-      setItems(prev => [...prev, { ...addForm, PRODUCT_NAME: p?.PRODUCT_NAME ?? '?', PRODUCT_ID: Number(addForm.product_id) }])
+      setItems(prev => [...prev, { ...addForm, item_type: itemType, PRODUCT_NAME: p?.PRODUCT_NAME ?? '?', PRODUCT_ID: Number(addForm.product_id) }])
       setAddForm({ product_id: '', item_type: 'FISH', quantity: 1 })
     } catch (e) {
-      setError(e.response?.data?.error ?? e.message)
+      // Swap internal IDs for names the customer recognises
+      const p = products.find(x => x.PRODUCT_ID === Number(addForm.product_id))
+      if (p) e.message = e.message
+        .replace(/Product \d+/, p.PRODUCT_NAME)
+        .replace(/setup \d+ is/, 'your setup is')
+      setError(e)
     }
   }
 
   const removeItem = (idx) => setItems(prev => prev.filter((_, i) => i !== idx))
 
   const goToReview = async () => {
-    setError('')
+    setError(null)
     try {
       const [vr, pr] = await Promise.all([validateSetup(setupId), getSetupPrice(setupId)])
       setValidation(vr.data)
       setPrice(pr.data)
       setStep(3)
     } catch (e) {
-      setError(e.response?.data?.error ?? e.message)
+      setError(e)
     }
   }
 
   const handleSave = async () => {
     if (!customer) return
     setSaving(true)
-    setError('')
+    setError(null)
     try {
       await saveSetup(setupId, { customer_id: customer.id, is_public: 0 })
       setSaved(true)
+      getSetups(customer.id).then(r => setSetups(r.data)).catch(() => {})
     } catch (e) {
-      setError(e.response?.data?.error ?? e.message)
+      setError(e)
     } finally {
       setSaving(false)
     }
@@ -121,17 +167,76 @@ export default function ShopBuilder() {
     )
   }
 
+  if (view === 'loading') {
+    return <div style={{ textAlign: 'center', padding: '80px 0', color: '#A6A299', fontSize: 13 }}>Loading…</div>
+  }
+
+  if (view === 'list') {
+    return (
+      <div style={{ maxWidth: 680, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+          <div>
+            <h1 style={{ margin: '0 0 4px', fontSize: 26, fontWeight: 800, color: '#1d1d1f', letterSpacing: '-0.03em' }}>
+              My Setups
+            </h1>
+            <p style={{ margin: 0, fontSize: 14, color: '#8e8e93' }}>
+              {setups.length} saved aquarium design{setups.length !== 1 ? 's' : ''}
+            </p>
+          </div>
+          <button className="btn-primary" onClick={startNewSetup}>
+            <Plus size={14} /> New Setup
+          </button>
+        </div>
+
+        <BuilderAlert error={error} onDismiss={() => setError(null)} />
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {setups.map(s => (
+            <div key={s.SETUP_ID} className="card" style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '18px 20px' }}>
+              <div style={{
+                width: 44, height: 44, borderRadius: 12, background: 'var(--chip-teal)', flexShrink: 0,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <Waves size={20} color="#2A6B60" />
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 14.5, fontWeight: 700, color: '#1d1d1f' }}>{s.SETUP_NAME}</div>
+                <div style={{ fontSize: 12, color: '#8e8e93', marginTop: 2 }}>
+                  {s.TANK_NAME}{s.VOLUME_LITERS ? ` · ${s.VOLUME_LITERS}L` : ''} · {s.WATER_TYPE}
+                  {s.CREATED_AT ? ` · ${s.CREATED_AT}` : ''}
+                </div>
+              </div>
+              {s.STATUS && <span className="badge s-gray">{s.STATUS}</span>}
+              <button className="btn-secondary" style={{ height: 36, padding: '0 14px', fontSize: 12.5 }}
+                onClick={() => addSetupToCart(s.SETUP_ID)} disabled={carting !== null}>
+                <ShoppingBag size={13} />
+                {carting === s.SETUP_ID ? 'Adding…' : 'Add to Cart'}
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div style={{ maxWidth: 680, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 24 }}>
 
       {/* Header */}
-      <div>
-        <h1 style={{ margin: '0 0 4px', fontSize: 26, fontWeight: 800, color: '#1d1d1f', letterSpacing: '-0.03em' }}>
-          Aquarium Builder
-        </h1>
-        <p style={{ margin: 0, fontSize: 14, color: '#8e8e93' }}>
-          Design your perfect tank step by step
-        </p>
+      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+        <div>
+          <h1 style={{ margin: '0 0 4px', fontSize: 26, fontWeight: 800, color: '#1d1d1f', letterSpacing: '-0.03em' }}>
+            Aquarium Builder
+          </h1>
+          <p style={{ margin: 0, fontSize: 14, color: '#8e8e93' }}>
+            Design your perfect tank step by step
+          </p>
+        </div>
+        {setups.length > 0 && (
+          <button className="btn-ghost" onClick={() => { loadSetups(); setView('list') }}>
+            <FolderOpen size={13} /> My Setups
+          </button>
+        )}
       </div>
 
       {/* Stepper */}
@@ -140,30 +245,26 @@ export default function ShopBuilder() {
           <div key={i} style={{ display: 'flex', alignItems: 'center', flex: i < STEP_LABELS.length - 1 ? 1 : 0 }}>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
               <div style={{
-                width: 32, height: 32, borderRadius: '50%', border: `2px solid ${i <= step ? '#0071e3' : '#e5e5ea'}`,
-                background: i < step ? '#0071e3' : i === step ? 'white' : 'white',
+                width: 32, height: 32, borderRadius: '50%', border: `2px solid ${i <= step ? '#16150F' : '#e5e5ea'}`,
+                background: i < step ? '#16150F' : i === step ? 'white' : 'white',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: 12, fontWeight: 700,
-                color: i < step ? 'white' : i === step ? '#0071e3' : '#aeaeb2',
+                color: i < step ? 'white' : i === step ? '#16150F' : '#aeaeb2',
               }}>
                 {i < step ? '✓' : i + 1}
               </div>
-              <span style={{ fontSize: 11, fontWeight: i === step ? 700 : 400, color: i <= step ? '#0071e3' : '#aeaeb2' }}>
+              <span style={{ fontSize: 11, fontWeight: i === step ? 700 : 400, color: i <= step ? '#16150F' : '#aeaeb2' }}>
                 {label}
               </span>
             </div>
             {i < STEP_LABELS.length - 1 && (
-              <div style={{ flex: 1, height: 2, background: i < step ? '#0071e3' : '#e5e5ea', marginBottom: 20 }} />
+              <div style={{ flex: 1, height: 2, background: i < step ? '#16150F' : '#e5e5ea', marginBottom: 20 }} />
             )}
           </div>
         ))}
       </div>
 
-      {error && (
-        <div style={{ color: '#ff3b30', fontSize: 13, background: '#fff2f2', borderRadius: 10, padding: '10px 14px' }}>
-          {error}
-        </div>
-      )}
+      <BuilderAlert error={error} onDismiss={() => setError(null)} />
 
       {/* Step 0 – Tank & Parameters */}
       {step === 0 && (
@@ -186,20 +287,22 @@ export default function ShopBuilder() {
                   <button key={id} onClick={() => setF('tank_id', id)}
                     style={{
                       display: 'flex', alignItems: 'center', gap: 14,
-                      padding: '12px 14px', borderRadius: 12, border: `2px solid ${sel ? '#0071e3' : '#e5e5ea'}`,
-                      background: sel ? 'rgba(0,113,227,0.04)' : 'white', cursor: 'pointer', textAlign: 'left',
+                      padding: '12px 14px', borderRadius: 12, border: `2px solid ${sel ? '#16150F' : '#e5e5ea'}`,
+                      background: sel ? 'rgba(22,21,15,0.04)' : 'white', cursor: 'pointer', textAlign: 'left',
                     }}>
                     <div style={{
-                      width: 36, height: 36, borderRadius: 10, background: sel ? '#e8f2ff' : '#f5f5f7',
+                      width: 36, height: 36, borderRadius: 10, background: sel ? '#EFEDE6' : '#f5f5f7',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>
-                      <Waves size={18} color={sel ? '#0071e3' : '#8e8e93'} />
+                      <Waves size={18} color={sel ? '#16150F' : '#8e8e93'} />
                     </div>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: 13, fontWeight: 600, color: '#1d1d1f' }}>{t.PRODUCT_NAME}</div>
-                      {t.DESCRIPTION && <div style={{ fontSize: 11, color: '#8e8e93' }}>{t.DESCRIPTION}</div>}
+                      <div style={{ fontSize: 11, color: '#8e8e93' }}>
+                        {[t.VOLUME_LITERS && `${t.VOLUME_LITERS}L`, t.MATERIAL, t.LENGTH_CM && `${t.LENGTH_CM}×${t.WIDTH_CM}×${t.HEIGHT_CM} cm`].filter(Boolean).join(' · ')}
+                      </div>
                     </div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: sel ? '#0071e3' : '#3a3a3c' }}>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: sel ? '#16150F' : '#3a3a3c' }}>
                       ${Number(t.UNIT_PRICE).toFixed(2)}
                     </div>
                   </button>
@@ -248,7 +351,7 @@ export default function ShopBuilder() {
               ['Temp', `${form.target_temp_c}°C`],
               ['pH', form.target_ph],
             ].map(([k, v]) => (
-              <div key={k} style={{ background: '#f5f5f7', borderRadius: 10, padding: '10px 14px' }}>
+              <div key={k} style={{ background: 'var(--bg)', borderRadius: 10, padding: '10px 14px' }}>
                 <div style={{ fontSize: 10, fontWeight: 600, color: '#8e8e93', textTransform: 'uppercase', marginBottom: 2 }}>{k}</div>
                 <div style={{ fontSize: 14, fontWeight: 700, color: '#1d1d1f' }}>{v}</div>
               </div>
@@ -264,7 +367,7 @@ export default function ShopBuilder() {
           {/* Add form */}
           <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <div style={{ fontSize: 15, fontWeight: 700, color: '#1d1d1f' }}>Add to Setup</div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 120px 80px', gap: 10 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 90px', gap: 10 }}>
               <div>
                 <label className="field-label">Product</label>
                 <select className="input" value={addForm.product_id}
@@ -281,13 +384,6 @@ export default function ShopBuilder() {
                       </optgroup>
                     )
                   })}
-                </select>
-              </div>
-              <div>
-                <label className="field-label">Type</label>
-                <select className="input" value={addForm.item_type}
-                  onChange={e => setAddForm(f => ({ ...f, item_type: e.target.value }))}>
-                  {ITEM_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                 </select>
               </div>
               <div>
@@ -344,7 +440,7 @@ export default function ShopBuilder() {
             ].map(({ key, label }) => (
               <div key={key} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 {validation[key]
-                  ? <CheckCircle size={18} color="#34c759" />
+                  ? <CheckCircle size={18} color="#1F7A45" />
                   : <XCircle    size={18} color="#ff3b30" />
                 }
                 <span style={{ fontSize: 13, color: validation[key] ? '#1d1d1f' : '#ff3b30' }}>{label}</span>
@@ -353,6 +449,24 @@ export default function ShopBuilder() {
                 </span>
               </div>
             ))}
+
+            {/* Which items caused the failures */}
+            {(validation.issues ?? []).length > 0 && (
+              <div style={{
+                background: '#fff8ed', border: '1px solid rgba(255,149,0,0.25)',
+                borderRadius: 10, padding: '10px 14px', display: 'flex', flexDirection: 'column', gap: 5,
+              }}>
+                {validation.issues.map((iss, i) => (
+                  <div key={i} style={{ fontSize: 12.5, color: '#a05e10' }}>
+                    <strong>{iss.product}</strong> {iss.detail}, but your setup is {form.water_type}
+                    {form.target_temp_c ? ` at ${form.target_temp_c}°C` : ''}.
+                  </div>
+                ))}
+                <div style={{ fontSize: 11.5, color: '#c08840', marginTop: 2 }}>
+                  Remove these items or adjust the setup to resolve.
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Summary */}
@@ -374,11 +488,11 @@ export default function ShopBuilder() {
 
           {saved ? (
             <div style={{
-              background: '#e8f8ee', border: '1px solid #34c759', borderRadius: 12,
+              background: '#e8f8ee', border: '1px solid #1F7A45', borderRadius: 12,
               padding: '14px 18px', fontSize: 13, color: '#1d1d1f', display: 'flex', alignItems: 'center', gap: 10,
             }}>
-              <CheckCircle size={18} color="#34c759" />
-              Setup saved! You can now add items to your cart.
+              <CheckCircle size={18} color="#1F7A45" />
+              Setup saved! Find it any time under My Setups, or add everything to your cart now.
             </div>
           ) : null}
 
@@ -389,16 +503,15 @@ export default function ShopBuilder() {
                 {saving ? 'Saving…' : 'Save Setup'}
               </button>
             )}
-            <button
-              onClick={() => navigate('/shop/browse')}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 6,
-                padding: '8px 16px', borderRadius: 9999, border: 'none',
-                background: '#e8f2ff', color: '#0071e3', cursor: 'pointer',
-                fontSize: 13, fontWeight: 600,
-              }}>
-              <ShoppingBag size={14} /> Add Items to Cart
+            <button className={saved ? 'btn-primary' : 'btn-secondary'}
+              onClick={() => addSetupToCart(setupId)} disabled={carting !== null}>
+              <ShoppingBag size={14} /> {carting !== null ? 'Adding…' : 'Add Setup to Cart'}
             </button>
+            {saved && (
+              <button className="btn-secondary" onClick={() => { loadSetups(); setView('list') }}>
+                <FolderOpen size={14} /> My Setups
+              </button>
+            )}
           </div>
         </div>
       )}

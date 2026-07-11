@@ -551,9 +551,10 @@ function AddItemModal({ setupId, onClose, onAdded }) {
     setSaving(true)
     setError('')
     try {
+      const chosen = products.find(p => p.PRODUCT_ID === Number(form.product_id))
       await addSetupItem(setupId, {
         product_id: Number(form.product_id),
-        item_type:  form.item_type,
+        item_type:  chosen?.PRODUCT_TYPE ?? 'FISH',
         quantity:   Number(form.quantity),
       })
       onAdded()
@@ -603,16 +604,6 @@ function AddItemModal({ setupId, onClose, onAdded }) {
                     {p.PRODUCT_NAME} ({p.PRODUCT_TYPE})
                   </option>
                 ))}
-              </select>
-            </div>
-            <div>
-              <label className="field-label">Item Type</label>
-              <select className="input" value={form.item_type}
-                onChange={e => set('item_type', e.target.value)}>
-                <option value="FISH">Fish</option>
-                <option value="PLANT">Plant</option>
-                <option value="EQUIPMENT">Equipment</option>
-                <option value="DECORATION">Decoration</option>
               </select>
             </div>
             <div>
