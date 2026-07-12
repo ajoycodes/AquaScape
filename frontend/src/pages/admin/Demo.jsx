@@ -13,9 +13,9 @@ import { PlayCircle, CheckCircle, Loader, ChevronDown, ChevronRight, Database, L
 
 /* ─── Section metadata ────────────────────────────────────────────── */
 const SECTION_META = {
-  aquarium: { label: 'Part 1 — Aquarium Builder', color: '#0071e3', bg: 'rgba(0,113,227,0.08)' },
-  order:    { label: 'Part 2 — Order & Fulfillment', color: '#34c759', bg: 'rgba(52,199,89,0.08)' },
-  restock:  { label: 'Part 3 — Supplier Restock', color: '#ff9500', bg: 'rgba(255,149,0,0.08)' },
+  aquarium: { label: 'Part 1 — Aquarium Builder', color: '#33607E', bg: 'rgba(22,21,15,0.08)' },
+  order:    { label: 'Part 2 — Order & Fulfillment', color: '#1F7A45', bg: 'rgba(52,199,89,0.08)' },
+  restock:  { label: 'Part 3 — Supplier Restock', color: '#B7791F', bg: 'rgba(255,149,0,0.08)' },
 }
 
 /* ─── Step definitions ────────────────────────────────────────────── */
@@ -461,8 +461,8 @@ export default function Demo() {
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 20, marginBottom: 20 }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-              <Database size={20} color="#0071e3" />
-              <span style={{ fontSize: 11, fontWeight: 700, color: '#0071e3', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+              <Database size={20} color="#33607E" />
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#33607E', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                 Oracle Database Showcase
               </span>
             </div>
@@ -490,7 +490,7 @@ export default function Demo() {
               </button>
               <button onClick={runAll} style={{
                 display: 'flex', alignItems: 'center', gap: 8, padding: '10px 20px',
-                borderRadius: 10, border: 'none', background: '#0071e3',
+                borderRadius: 10, border: 'none', background: '#33607E',
                 color: 'white', fontSize: 13, fontWeight: 700, cursor: 'pointer',
               }}>
                 <PlayCircle size={16} /> Run All Steps
@@ -499,7 +499,7 @@ export default function Demo() {
             {/* Progress bar */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
               <div style={{ width: 140, height: 4, borderRadius: 4, background: 'rgba(255,255,255,0.15)', overflow: 'hidden' }}>
-                <div style={{ height: '100%', borderRadius: 4, background: '#34c759', width: `${(doneCount / STEPS.length) * 100}%`, transition: 'width 0.4s' }} />
+                <div style={{ height: '100%', borderRadius: 4, background: '#1F7A45', width: `${(doneCount / STEPS.length) * 100}%`, transition: 'width 0.4s' }} />
               </div>
               <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>{doneCount}/{STEPS.length} steps done</span>
             </div>
@@ -537,9 +537,9 @@ export default function Demo() {
             ))}
           </select>
           <div style={{ display: 'flex', gap: 8, marginLeft: 'auto', flexWrap: 'wrap' }}>
-            {setupId && <Pill label="Setup" value={`#${setupId}`} color="#0071e3" />}
-            {orderId && <Pill label="Order" value={`#${orderId}`} color="#34c759" />}
-            {poId    && <Pill label="PO"    value={`#${poId}`}    color="#ff9500" />}
+            {setupId && <Pill label="Setup" value={`#${setupId}`} color="#33607E" />}
+            {orderId && <Pill label="Order" value={`#${orderId}`} color="#1F7A45" />}
+            {poId    && <Pill label="PO"    value={`#${poId}`}    color="#B7791F" />}
           </div>
         </div>
       )}
@@ -569,14 +569,14 @@ export default function Demo() {
                       {/* Step bubble */}
                       <div style={{
                         width: 32, height: 32, borderRadius: '50%', flexShrink: 0, marginTop: 2,
-                        background: res.done ? '#e8f8ee' : res.error ? '#fff2f2' : locked ? '#f5f5f7' : meta.bg,
-                        border: `2px solid ${res.done ? '#34c759' : res.error ? '#ff3b30' : locked ? '#e5e5ea' : meta.color + '55'}`,
+                        background: res.done ? '#E9F4EC' : res.error ? '#FBEDEA' : locked ? '#F2F0EA' : meta.bg,
+                        border: `2px solid ${res.done ? '#1F7A45' : res.error ? '#C0392B' : locked ? '#e5e5ea' : meta.color + '55'}`,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                       }}>
                         {res.running
                           ? <Loader size={14} color={meta.color} style={{ animation: 'spin 1s linear infinite' }} />
                           : res.done
-                          ? <CheckCircle size={14} color="#34c759" />
+                          ? <CheckCircle size={14} color="#1F7A45" />
                           : locked
                           ? <Lock size={12} color="#aeaeb2" />
                           : <span style={{ fontSize: 12, fontWeight: 800, color: meta.color }}>{globalIdx + 1}</span>
@@ -589,8 +589,8 @@ export default function Demo() {
                           <span style={{ fontSize: 14, fontWeight: 700, color: locked ? '#8e8e93' : '#1d1d1f' }}>
                             {step.label}
                           </span>
-                          {res.error && <Tag text="Error" color="#ff3b30" bg="#fff2f2" />}
-                          {locked && !res.done && <Tag text="Complete previous step first" color="#aeaeb2" bg="#f5f5f7" />}
+                          {res.error && <Tag text="Error" color="#C0392B" bg="#FBEDEA" />}
+                          {locked && !res.done && <Tag text="Complete previous step first" color="#aeaeb2" bg="#F2F0EA" />}
                         </div>
 
                         <p style={{ margin: '0 0 10px', fontSize: 13, color: '#6e6e73', lineHeight: 1.5 }}>
@@ -607,7 +607,7 @@ export default function Demo() {
                         {/* Result */}
                         {res.done && res.data && <StepResult stepId={step.id} data={res.data} color={meta.color} />}
                         {res.error && (
-                          <div style={{ fontSize: 12, color: '#ff3b30', background: '#fff2f2', borderRadius: 8, padding: '8px 12px', marginTop: 6 }}>
+                          <div style={{ fontSize: 12, color: '#C0392B', background: '#FBEDEA', borderRadius: 8, padding: '8px 12px', marginTop: 6 }}>
                             {res.error}
                           </div>
                         )}
@@ -633,8 +633,8 @@ export default function Demo() {
                         style={{
                           flexShrink: 0, display: 'flex', alignItems: 'center', gap: 6,
                           padding: '8px 14px', borderRadius: 9999, border: 'none',
-                          background: res.done ? '#e8f8ee' : locked ? '#f5f5f7' : meta.color,
-                          color: res.done ? '#34c759' : locked ? '#aeaeb2' : 'white',
+                          background: res.done ? '#E9F4EC' : locked ? '#F2F0EA' : meta.color,
+                          color: res.done ? '#1F7A45' : locked ? '#aeaeb2' : 'white',
                           fontSize: 12, fontWeight: 600,
                           cursor: locked || res.running ? 'not-allowed' : 'pointer',
                           opacity: res.running ? 0.7 : 1, transition: 'all 0.2s',
@@ -658,7 +658,7 @@ export default function Demo() {
       })}
 
       {/* ── Oracle objects summary ───────────────────────────────── */}
-      <div className="card" style={{ background: '#f5f5f7', padding: '20px 24px' }}>
+      <div className="card" style={{ background: '#F2F0EA', padding: '20px 24px' }}>
         <div style={{ fontSize: 13, fontWeight: 700, color: '#1d1d1f', marginBottom: 14 }}>
           Oracle Objects Used in This Demo
         </div>
@@ -743,7 +743,7 @@ function StepResult({ stepId, data, color }) {
         <div style={{ display: 'flex', gap: 20 }}>
           {[['Capacity', d.capacity_ok], ['Water Type', d.water_ok], ['Temperature', d.temp_ok]].map(([l, v]) => (
             <div key={l} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <div style={{ width: 14, height: 14, borderRadius: '50%', background: v ? '#34c759' : '#ff3b30' }} />
+              <div style={{ width: 14, height: 14, borderRadius: '50%', background: v ? '#1F7A45' : '#C0392B' }} />
               <span style={{ fontSize: 12, color: '#3a3a3c' }}>{l}: {v ? 'OK' : 'Fail'}</span>
             </div>
           ))}
@@ -770,12 +770,12 @@ function StepResult({ stepId, data, color }) {
     inventory: d => (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {d.product && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: '#fff2f2', borderRadius: 8, padding: '10px 14px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: '#FBEDEA', borderRadius: 8, padding: '10px 14px', flexWrap: 'wrap' }}>
             <span style={{ fontSize: 12, color: '#6e6e73', minWidth: 140 }}>{d.product}</span>
             <span style={{ fontSize: 16, fontWeight: 800, fontFamily: 'monospace', color: '#1d1d1f' }}>{d.before_qty}</span>
             <span style={{ fontSize: 16, color: '#aeaeb2', fontWeight: 300 }}>→</span>
-            <span style={{ fontSize: 16, fontWeight: 800, fontFamily: 'monospace', color: '#ff3b30' }}>{d.after_qty}</span>
-            <span style={{ fontSize: 11, color: '#ff3b30', background: '#ffe6e6', borderRadius: 6, padding: '3px 8px', fontWeight: 600 }}>
+            <span style={{ fontSize: 16, fontWeight: 800, fontFamily: 'monospace', color: '#C0392B' }}>{d.after_qty}</span>
+            <span style={{ fontSize: 11, color: '#C0392B', background: '#ffe6e6', borderRadius: 6, padding: '3px 8px', fontWeight: 600 }}>
               −1 by TRG_DEDUCT_STOCK
             </span>
           </div>
@@ -788,7 +788,7 @@ function StepResult({ stepId, data, color }) {
         {d.logs?.map((l, i) => (
           <div key={i} style={{ fontSize: 11, color: '#3a3a3c', fontFamily: 'monospace' }}>
             <span style={{ color: '#aeaeb2' }}>[{l.ACTION}]</span>{' '}
-            <span style={{ color: '#0071e3' }}>{l.TABLE_NAME}</span>{' '}
+            <span style={{ color: '#33607E' }}>{l.TABLE_NAME}</span>{' '}
             #{l.RECORD_ID}
           </div>
         ))}
@@ -815,7 +815,7 @@ function StepResult({ stepId, data, color }) {
     restock_approve: d => <div style={{ fontSize: 12, color: '#6e6e73' }}>PO #{d.po_id} — Status → <strong>APPROVED</strong></div>,
     restock_receive: d => (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-        <div style={{ fontSize: 12, color: '#34c759', fontWeight: 600 }}>PO #{d.po_id} — RECEIVED — stock replenished</div>
+        <div style={{ fontSize: 12, color: '#1F7A45', fontWeight: 600 }}>PO #{d.po_id} — RECEIVED — stock replenished</div>
         {d.movements?.map((m, i) => (
           <div key={i} style={{ fontSize: 11, fontFamily: 'monospace', color: '#3a3a3c', paddingLeft: 8 }}>
             [{m.type}] {m.product}: {m.qty > 0 ? '+' : ''}{m.qty}
@@ -829,7 +829,7 @@ function StepResult({ stepId, data, color }) {
   if (!renderer) return null
 
   return (
-    <div style={{ background: '#f5f5f7', borderRadius: 10, padding: '10px 14px', marginTop: 10, border: `1px solid ${color}22` }}>
+    <div style={{ background: '#F2F0EA', borderRadius: 10, padding: '10px 14px', marginTop: 10, border: `1px solid ${color}22` }}>
       <div style={{ fontSize: 10, fontWeight: 700, color: '#aeaeb2', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>
         Live Result from Oracle
       </div>

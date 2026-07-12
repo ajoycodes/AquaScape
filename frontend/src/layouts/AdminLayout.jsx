@@ -47,14 +47,14 @@ export default function AdminLayout() {
   if (!user) return <Navigate to="/login" replace />
 
   return (
-    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: '#f5f5f7' }}>
+    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: 'var(--bg)' }}>
 
       {/* ── Sidebar ─────────────────────────────────────────────── */}
       <aside style={{
         width: 220,
         flexShrink: 0,
-        background: '#f5f5f7',
-        borderRight: '1px solid #d1d1d6',
+        background: 'var(--bg)',
+        borderRight: '1px solid var(--border)',
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
@@ -67,7 +67,7 @@ export default function AdminLayout() {
         }}>
           <div style={{
             width: 36, height: 36, borderRadius: 10,
-            background: '#0071e3',
+            background: 'var(--ink)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             flexShrink: 0,
           }}>
@@ -101,14 +101,14 @@ export default function AdminLayout() {
                   style={({ isActive }) => ({
                     display: 'flex', alignItems: 'center', gap: 10,
                     padding: '8px 10px',
-                    borderRadius: 8,
+                    borderRadius: 10,
                     fontSize: 13, fontWeight: 500,
                     letterSpacing: '-0.01em',
                     textDecoration: 'none',
                     marginBottom: 2,
                     transition: 'background 0.12s',
-                    background: isActive ? 'rgba(0,113,227,0.1)' : 'transparent',
-                    color: isActive ? '#0071e3' : '#3a3a3c',
+                    background: isActive ? 'var(--ink)' : 'transparent',
+                    color: isActive ? 'white' : '#3a3a3c',
                   })}
                 >
                   {({ isActive }) => (
@@ -126,14 +126,14 @@ export default function AdminLayout() {
         {/* Footer */}
         <div style={{
           padding: '12px 18px',
-          borderTop: '1px solid #e5e5ea',
+          borderTop: '1px solid var(--border)',
           display: 'flex', flexDirection: 'column', gap: 8,
         }}>
           <NavLink to="/shop" style={{
             display: 'flex', alignItems: 'center', gap: 7,
             padding: '7px 8px', borderRadius: 8, textDecoration: 'none',
-            fontSize: 13, fontWeight: 500, color: '#0071e3',
-            background: 'rgba(0,113,227,0.07)',
+            fontSize: 13, fontWeight: 500, color: 'var(--ink)',
+            background: 'rgba(22,21,15,0.06)',
           }}>
             <ShoppingCart size={14} strokeWidth={1.8} /> Visit Store
           </NavLink>
@@ -163,10 +163,10 @@ export default function AdminLayout() {
         {/* Topbar */}
         <header style={{
           height: 52,
-          background: 'rgba(255,255,255,0.85)',
+          background: 'rgba(247,245,241,0.88)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: '1px solid #d1d1d6',
+          borderBottom: '1px solid var(--border)',
           display: 'flex', alignItems: 'center',
           padding: '0 24px',
           flexShrink: 0,

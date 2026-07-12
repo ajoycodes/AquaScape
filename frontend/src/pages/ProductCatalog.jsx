@@ -26,7 +26,7 @@ export default function ProductCatalog() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      {error && <div style={{ color: '#ff3b30', fontSize: 13 }}>{error}</div>}
+      {error && <div style={{ color: '#C0392B', fontSize: 13 }}>{error}</div>}
 
       {/* Toolbar */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
@@ -157,7 +157,7 @@ function ProductModal({ onClose, onSaved }) {
         </div>
         <form onSubmit={submit}>
           <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            {error && <div style={{ color: '#ff3b30', fontSize: 13 }}>{error}</div>}
+            {error && <div style={{ color: '#C0392B', fontSize: 13 }}>{error}</div>}
             <div>
               <label className="field-label">Product Name</label>
               <input className="input" required value={form.product_name}

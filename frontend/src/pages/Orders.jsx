@@ -58,7 +58,7 @@ export default function Orders() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      {error && <div style={{ color: '#ff3b30', fontSize: 13 }}>{error}</div>}
+      {error && <div style={{ color: '#C0392B', fontSize: 13 }}>{error}</div>}
 
       {/* Filter */}
       <div>
@@ -95,7 +95,7 @@ export default function Orders() {
                   <tr key={o.ORDER_ID}
                     style={{
                       cursor: 'pointer',
-                      background: detail?.ORDER_ID === o.ORDER_ID ? 'rgba(0,113,227,0.06)' : 'transparent',
+                      background: detail?.ORDER_ID === o.ORDER_ID ? 'rgba(22,21,15,0.06)' : 'transparent',
                       transition: 'background 0.1s',
                     }}
                     onMouseEnter={e => {
@@ -104,10 +104,10 @@ export default function Orders() {
                     }}
                     onMouseLeave={e => {
                       e.currentTarget.style.background =
-                        detail?.ORDER_ID === o.ORDER_ID ? 'rgba(0,113,227,0.06)' : 'transparent'
+                        detail?.ORDER_ID === o.ORDER_ID ? 'rgba(22,21,15,0.06)' : 'transparent'
                     }}
                     onClick={() => openDetail(o.ORDER_ID)}>
-                    <td className="table-td" style={{ fontFamily: 'monospace', fontWeight: 600, color: '#0071e3' }}>
+                    <td className="table-td" style={{ fontFamily: 'monospace', fontWeight: 600, color: '#33607E' }}>
                       #{o.ORDER_ID}
                     </td>
                     <td className="table-td">{o.CUSTOMER_NAME ?? o.CUSTOMER_ID}</td>

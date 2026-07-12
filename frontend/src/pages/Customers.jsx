@@ -25,7 +25,7 @@ export default function Customers() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      {error && <div style={{ color: '#ff3b30', fontSize: 13 }}>{error}</div>}
+      {error && <div style={{ color: '#C0392B', fontSize: 13 }}>{error}</div>}
 
       {/* Toolbar */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -132,7 +132,7 @@ function CustomerModal({ onClose, onSaved }) {
         </div>
         <form onSubmit={submit}>
           <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            {error && <div style={{ color: '#ff3b30', fontSize: 13 }}>{error}</div>}
+            {error && <div style={{ color: '#C0392B', fontSize: 13 }}>{error}</div>}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               <div>
                 <label className="field-label">First Name</label>

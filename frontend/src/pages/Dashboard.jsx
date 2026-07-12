@@ -9,17 +9,17 @@ import {
 import { Package, ShoppingCart, AlertTriangle, TrendingUp, Users, Truck, Clock, Layers, RefreshCw } from 'lucide-react'
 
 const KPI_CONFIG = [
-  { key: 'TOTAL_PRODUCTS',       label: 'Products',           icon: Package,       color: '#0071e3', bg: '#e3f0fd' },
-  { key: 'ORDERS_THIS_MONTH',    label: 'Orders This Month',  icon: ShoppingCart,  color: '#34c759', bg: '#e8f8ed' },
-  { key: 'REVENUE_THIS_MONTH',   label: 'Revenue This Month', icon: TrendingUp,    color: '#bf5af2', bg: '#f4eaff', money: true },
-  { key: 'OPEN_LOW_STOCK_ALERTS',label: 'Low Stock Alerts',   icon: AlertTriangle, color: '#ff9500', bg: '#fff0d9' },
+  { key: 'TOTAL_PRODUCTS',       label: 'Products',           icon: Package,       color: '#33607E', bg: '#E8F1F5' },
+  { key: 'ORDERS_THIS_MONTH',    label: 'Orders This Month',  icon: ShoppingCart,  color: '#1F7A45', bg: '#E9F4EC' },
+  { key: 'REVENUE_THIS_MONTH',   label: 'Revenue This Month', icon: TrendingUp,    color: '#61548A', bg: '#F0EDF6', money: true },
+  { key: 'OPEN_LOW_STOCK_ALERTS',label: 'Low Stock Alerts',   icon: AlertTriangle, color: '#B7791F', bg: '#FBF3E4' },
 ]
 
 const KPI_CONFIG2 = [
-  { key: 'TOTAL_CUSTOMERS', label: 'Customers',      icon: Users,    color: '#32ade6', bg: '#e5f6ff' },
-  { key: 'TOTAL_SUPPLIERS', label: 'Suppliers',      icon: Truck,    color: '#ff3b30', bg: '#fff0ef' },
-  { key: 'PENDING_ORDERS',  label: 'Pending Orders', icon: Clock,    color: '#ff9500', bg: '#fff0d9' },
-  { key: 'ACTIVE_SETUPS',   label: 'Active Setups',  icon: Layers,   color: '#34c759', bg: '#e8f8ed' },
+  { key: 'TOTAL_CUSTOMERS', label: 'Customers',      icon: Users,    color: '#4A7BA6', bg: '#E8F1F5' },
+  { key: 'TOTAL_SUPPLIERS', label: 'Suppliers',      icon: Truck,    color: '#C0392B', bg: '#FBEDEA' },
+  { key: 'PENDING_ORDERS',  label: 'Pending Orders', icon: Clock,    color: '#B7791F', bg: '#FBF3E4' },
+  { key: 'ACTIVE_SETUPS',   label: 'Active Setups',  icon: Layers,   color: '#1F7A45', bg: '#E9F4EC' },
 ]
 
 export default function Dashboard() {
@@ -45,7 +45,7 @@ export default function Dashboard() {
 
   useEffect(() => { load() }, [load])
 
-  if (error) return <div style={{ color: '#ff3b30', padding: 16, fontSize: 13 }}>{error}</div>
+  if (error) return <div style={{ color: '#C0392B', padding: 16, fontSize: 13 }}>{error}</div>
   if (!kpis)  return <LoadingState />
 
   const K = k => kpis[k] ?? kpis[k.toUpperCase()] ?? '—'
@@ -115,7 +115,7 @@ export default function Dashboard() {
                     contentStyle={{ background: 'white', border: '1px solid #e5e5ea', borderRadius: 10, fontSize: 12 }}
                     formatter={v => [`$${Number(v).toFixed(2)}`, 'Revenue']}
                   />
-                  <Bar dataKey="TOTAL_REVENUE" fill="#0071e3" radius={[5, 5, 0, 0]} />
+                  <Bar dataKey="TOTAL_REVENUE" fill="#33607E" radius={[5, 5, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             )
@@ -140,7 +140,7 @@ export default function Dashboard() {
                   <Tooltip
                     contentStyle={{ background: 'white', border: '1px solid #e5e5ea', borderRadius: 10, fontSize: 12 }}
                   />
-                  <Bar dataKey="TOTAL_SOLD" name="Units Sold" fill="#32ade6" radius={[0, 5, 5, 0]} />
+                  <Bar dataKey="TOTAL_SOLD" name="Units Sold" fill="#4A7BA6" radius={[0, 5, 5, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             )

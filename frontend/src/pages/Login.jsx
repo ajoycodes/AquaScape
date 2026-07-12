@@ -28,7 +28,7 @@ export default function Login() {
 
   return (
     <div style={{
-      minHeight: '100vh', background: 'linear-gradient(135deg, #0a1628 0%, #0d2b52 60%, #0a3d6e 100%)',
+      minHeight: '100vh', background: 'linear-gradient(135deg, #16150F 0%, #23221A 60%, #2C2A1F 100%)',
       display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24,
     }}>
       <div style={{
@@ -40,7 +40,7 @@ export default function Login() {
         {/* Logo */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, marginBottom: 32 }}>
           <div style={{
-            width: 52, height: 52, borderRadius: 14, background: '#0071e3',
+            width: 52, height: 52, borderRadius: 14, background: 'rgba(255,255,255,0.14)', border: '1px solid rgba(255,255,255,0.18)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
             <Fish size={28} color="white" strokeWidth={2} />
@@ -94,8 +94,8 @@ export default function Login() {
           <button type="submit" disabled={loading}
             style={{
               width: '100%', padding: '12px', borderRadius: 10, border: 'none',
-              background: loading ? 'rgba(0,113,227,0.5)' : '#0071e3',
-              color: 'white', fontSize: 14, fontWeight: 700,
+              background: loading ? 'rgba(255,255,255,0.55)' : 'white',
+              color: '#16150F', fontSize: 14, fontWeight: 700,
               cursor: loading ? 'not-allowed' : 'pointer', marginTop: 4,
             }}>
             {loading ? 'Signing in…' : 'Sign In'}

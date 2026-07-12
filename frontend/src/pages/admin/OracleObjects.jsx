@@ -58,13 +58,13 @@ const DESCRIPTIONS = {
 const TYPE_ORDER = ['PROCEDURE', 'FUNCTION', 'TRIGGER', 'VIEW', 'TABLE', 'SEQUENCE', 'INDEX', 'PACKAGE']
 
 const TYPE_COLOR = {
-  PROCEDURE: '#bf5af2',
-  FUNCTION:  '#ff9500',
-  TRIGGER:   '#ff3b30',
-  VIEW:      '#0071e3',
-  TABLE:     '#34c759',
-  SEQUENCE:  '#32ade6',
-  INDEX:     '#32ade6',
+  PROCEDURE: '#61548A',
+  FUNCTION:  '#B7791F',
+  TRIGGER:   '#C0392B',
+  VIEW:      '#33607E',
+  TABLE:     '#1F7A45',
+  SEQUENCE:  '#4A7BA6',
+  INDEX:     '#4A7BA6',
   PACKAGE:   '#8e8e93',
 }
 
@@ -117,8 +117,8 @@ export default function OracleObjects() {
       }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-            <Database size={20} color="#bf5af2" />
-            <span style={{ fontSize: 11, fontWeight: 700, color: '#bf5af2', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+            <Database size={20} color="#61548A" />
+            <span style={{ fontSize: 11, fontWeight: 700, color: '#61548A', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
               USER_OBJECTS · Oracle 21c XE
             </span>
           </div>
@@ -148,7 +148,7 @@ export default function OracleObjects() {
       </div>
 
       {error && (
-        <div style={{ background: '#fff2f2', border: '1px solid #ff3b3033', borderRadius: 12, padding: '14px 18px', color: '#c0392b', fontSize: 13 }}>
+        <div style={{ background: '#FBEDEA', border: '1px solid #C0392B33', borderRadius: 12, padding: '14px 18px', color: '#c0392b', fontSize: 13 }}>
           {error}
         </div>
       )}
@@ -163,12 +163,12 @@ export default function OracleObjects() {
               <div style={{ fontSize: 11, color: '#8e8e93', marginTop: 2, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Total Objects</div>
             </div>
             {invalid > 0 && (
-              <div className="card" style={{ padding: '16px 18px', textAlign: 'center', background: '#fff8f0', border: '1px solid #ff950033' }}>
+              <div className="card" style={{ padding: '16px 18px', textAlign: 'center', background: '#fff8f0', border: '1px solid #B7791F33' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-                  <AlertTriangle size={16} color="#ff9500" />
-                  <div style={{ fontSize: 32, fontWeight: 800, color: '#ff9500', letterSpacing: '-0.04em' }}>{invalid}</div>
+                  <AlertTriangle size={16} color="#B7791F" />
+                  <div style={{ fontSize: 32, fontWeight: 800, color: '#B7791F', letterSpacing: '-0.04em' }}>{invalid}</div>
                 </div>
-                <div style={{ fontSize: 11, color: '#ff9500', marginTop: 2, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Invalid</div>
+                <div style={{ fontSize: 11, color: '#B7791F', marginTop: 2, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Invalid</div>
               </div>
             )}
             {TYPE_ORDER.filter(t => countMap[t] > 0).map(type => (
@@ -201,9 +201,9 @@ export default function OracleObjects() {
                   onClick={() => setFilter(t)}
                   style={{
                     padding: '6px 12px', borderRadius: 8,
-                    border: filter === t ? `1.5px solid ${t === 'ALL' ? '#0071e3' : TYPE_COLOR[t]}` : '1px solid #e5e5ea',
-                    background: filter === t ? (t === 'ALL' ? '#0071e310' : TYPE_COLOR[t] + '10') : 'white',
-                    color: filter === t ? (t === 'ALL' ? '#0071e3' : TYPE_COLOR[t]) : '#6e6e73',
+                    border: filter === t ? `1.5px solid ${t === 'ALL' ? '#33607E' : TYPE_COLOR[t]}` : '1px solid #e5e5ea',
+                    background: filter === t ? (t === 'ALL' ? '#33607E10' : TYPE_COLOR[t] + '10') : 'white',
+                    color: filter === t ? (t === 'ALL' ? '#33607E' : TYPE_COLOR[t]) : '#6e6e73',
                     fontSize: 12, fontWeight: 600, cursor: 'pointer',
                   }}>
                   {t === 'ALL' ? 'All Types' : t}
@@ -223,7 +223,7 @@ export default function OracleObjects() {
           <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr style={{ background: '#f5f5f7' }}>
+                <tr style={{ background: '#F2F0EA' }}>
                   <th className="table-th" style={{ width: 90 }}>Type</th>
                   <th className="table-th">Object Name</th>
                   <th className="table-th">Description</th>
@@ -254,7 +254,7 @@ export default function OracleObjects() {
                       <span style={{
                         fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 6,
                         color: obj.STATUS === 'VALID' ? '#1c7737' : '#c0392b',
-                        background: obj.STATUS === 'VALID' ? '#e8f8ee' : '#fff2f2',
+                        background: obj.STATUS === 'VALID' ? '#E9F4EC' : '#FBEDEA',
                       }}>
                         {obj.STATUS}
                       </span>

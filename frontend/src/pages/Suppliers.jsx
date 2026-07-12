@@ -38,7 +38,7 @@ export default function Suppliers() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      {error && <div style={{ color: '#ff3b30', fontSize: 13 }}>{error}</div>}
+      {error && <div style={{ color: '#C0392B', fontSize: 13 }}>{error}</div>}
 
       {/* Segment + actions */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -112,17 +112,17 @@ export default function Suppliers() {
                   <tr key={p.PO_ID}
                     style={{
                       cursor: 'pointer',
-                      background: detail?.PO_ID === p.PO_ID ? 'rgba(0,113,227,0.06)' : 'transparent',
+                      background: detail?.PO_ID === p.PO_ID ? 'rgba(22,21,15,0.06)' : 'transparent',
                     }}
                     onMouseEnter={e => {
                       if (detail?.PO_ID !== p.PO_ID) e.currentTarget.style.background = '#f9f9fb'
                     }}
                     onMouseLeave={e => {
                       e.currentTarget.style.background =
-                        detail?.PO_ID === p.PO_ID ? 'rgba(0,113,227,0.06)' : 'transparent'
+                        detail?.PO_ID === p.PO_ID ? 'rgba(22,21,15,0.06)' : 'transparent'
                     }}
                     onClick={() => loadPO(p.PO_ID)}>
-                    <td className="table-td" style={{ fontFamily: 'monospace', fontWeight: 600, color: '#0071e3' }}>#{p.PO_ID}</td>
+                    <td className="table-td" style={{ fontFamily: 'monospace', fontWeight: 600, color: '#33607E' }}>#{p.PO_ID}</td>
                     <td className="table-td">{p.SUPPLIER_NAME}</td>
                     <td className="table-td" style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>
                       ${Number(p.TOTAL_AMOUNT ?? 0).toFixed(2)}
@@ -257,7 +257,7 @@ function NewPOModal({ suppliers, onClose, onCreated }) {
         </div>
         <form onSubmit={submit}>
           <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            {error && <div style={{ color: '#ff3b30', fontSize: 13 }}>{error}</div>}
+            {error && <div style={{ color: '#C0392B', fontSize: 13 }}>{error}</div>}
             <div>
               <label className="field-label">Supplier</label>
               <select className="input" required value={suppId} onChange={e => setSuppId(e.target.value)}>
@@ -325,7 +325,7 @@ function AddPOItemModal({ poId, onClose, onAdded }) {
         </div>
         <form onSubmit={submit}>
           <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            {error && <div style={{ color: '#ff3b30', fontSize: 13 }}>{error}</div>}
+            {error && <div style={{ color: '#C0392B', fontSize: 13 }}>{error}</div>}
             <div>
               <label className="field-label">Product</label>
               <select className="input" required value={form.product_id}

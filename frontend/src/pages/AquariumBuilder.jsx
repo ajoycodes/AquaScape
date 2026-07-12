@@ -23,8 +23,8 @@ function parseOraError(err) {
 }
 
 const WATER_COLOR = {
-  FRESHWATER: { color: '#1c7737', bg: '#e8f8ee' },
-  SALTWATER:  { color: '#0071e3', bg: '#e3f0fd' },
+  FRESHWATER: { color: '#1c7737', bg: '#E9F4EC' },
+  SALTWATER:  { color: '#33607E', bg: '#E8F1F5' },
   BRACKISH:   { color: '#b45309', bg: '#fff7ed' },
 }
 
@@ -128,15 +128,15 @@ export default function AquariumBuilder() {
               </div>
             ) : (
               setups.map(s => {
-                const wc = WATER_COLOR[s.WATER_TYPE] ?? { color: '#6e6e73', bg: '#f5f5f7' }
+                const wc = WATER_COLOR[s.WATER_TYPE] ?? { color: '#6e6e73', bg: '#F2F0EA' }
                 const active = activeId === s.SETUP_ID
                 return (
                   <button key={s.SETUP_ID}
                     onClick={() => loadSetup(s.SETUP_ID)}
                     style={{
                       width: '100%', textAlign: 'left',
-                      background: active ? 'rgba(0,113,227,0.06)' : 'white',
-                      border: `1px solid ${active ? '#0071e3' : '#e5e5ea'}`,
+                      background: active ? 'rgba(22,21,15,0.06)' : 'white',
+                      border: `1px solid ${active ? '#33607E' : '#e5e5ea'}`,
                       borderRadius: 12, padding: '12px 14px',
                       cursor: 'pointer', transition: 'all 0.15s',
                     }}
@@ -166,13 +166,13 @@ export default function AquariumBuilder() {
         {error && (
           <div style={{
             display: 'flex', gap: 8, alignItems: 'flex-start',
-            background: '#fff2f2', border: '1px solid #ffd5d2',
+            background: '#FBEDEA', border: '1px solid #ffd5d2',
             borderRadius: 10, padding: '10px 12px',
           }}>
-            <AlertTriangle size={14} color="#ff3b30" style={{ flexShrink: 0, marginTop: 1 }} />
+            <AlertTriangle size={14} color="#C0392B" style={{ flexShrink: 0, marginTop: 1 }} />
             <span style={{ fontSize: 12, color: '#c0392b', lineHeight: 1.5, flex: 1 }}>{error}</span>
             <button onClick={() => setError('')}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff3b30', padding: 0, flexShrink: 0, lineHeight: 1 }}>
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#C0392B', padding: 0, flexShrink: 0, lineHeight: 1 }}>
               <X size={13} />
             </button>
           </div>
@@ -180,10 +180,10 @@ export default function AquariumBuilder() {
         {msg && (
           <div style={{
             display: 'flex', gap: 8, alignItems: 'center',
-            background: '#e8f8ee', border: '1px solid #b8f0ca',
+            background: '#E9F4EC', border: '1px solid #b8f0ca',
             borderRadius: 10, padding: '10px 12px',
           }}>
-            <CheckCircle size={14} color="#34c759" style={{ flexShrink: 0 }} />
+            <CheckCircle size={14} color="#1F7A45" style={{ flexShrink: 0 }} />
             <span style={{ fontSize: 12, color: '#1c7737', flex: 1 }}>{msg}</span>
           </div>
         )}
@@ -202,7 +202,7 @@ export default function AquariumBuilder() {
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 6 }}>
                     {setup.WATER_TYPE && (() => {
-                      const wc = WATER_COLOR[setup.WATER_TYPE] ?? { color: '#6e6e73', bg: '#f5f5f7' }
+                      const wc = WATER_COLOR[setup.WATER_TYPE] ?? { color: '#6e6e73', bg: '#F2F0EA' }
                       return (
                         <span style={{
                           fontSize: 11, fontWeight: 700, letterSpacing: '0.05em',
@@ -251,7 +251,7 @@ export default function AquariumBuilder() {
                   padding: '10px 14px',
                   borderRadius: 10,
                   fontSize: 13,
-                  background: (val.capacity_ok && val.water_ok && val.temp_ok) ? '#e8f8ee' : '#fff2f2',
+                  background: (val.capacity_ok && val.water_ok && val.temp_ok) ? '#E9F4EC' : '#FBEDEA',
                   color:      (val.capacity_ok && val.water_ok && val.temp_ok) ? '#1c7737' : '#c0392b',
                 }}>
                   {val.capacity_ok && val.water_ok && val.temp_ok
@@ -269,7 +269,7 @@ export default function AquariumBuilder() {
               {price !== null && (
                 <div style={{
                   marginTop: 10, padding: '10px 14px', borderRadius: 10,
-                  background: '#e3f0fd', color: '#0071e3', fontSize: 13,
+                  background: '#E8F1F5', color: '#33607E', fontSize: 13,
                 }}>
                   Estimated total: <strong>${Number(price).toFixed(2)}</strong>
                 </div>
@@ -326,7 +326,7 @@ export default function AquariumBuilder() {
                         <td className="table-td">
                           {setup.STATUS === 'DRAFT' && (
                             <button onClick={() => handleRemove(item.PRODUCT_ID)}
-                              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff3b30', padding: 4 }}>
+                              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#C0392B', padding: 4 }}>
                               <Trash2 size={13} />
                             </button>
                           )}
@@ -437,7 +437,7 @@ function NewSetupModal({ customerId, onClose, onCreated }) {
         <form onSubmit={submit}>
           <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
             {error && (
-              <div style={{ fontSize: 12, color: '#ff3b30', background: '#fff2f2', borderRadius: 8, padding: '10px 12px' }}>
+              <div style={{ fontSize: 12, color: '#C0392B', background: '#FBEDEA', borderRadius: 8, padding: '10px 12px' }}>
                 {error}
               </div>
             )}
@@ -470,7 +470,7 @@ function NewSetupModal({ customerId, onClose, onCreated }) {
               <label className="field-label">Water Type</label>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginTop: 6 }}>
                 {WATER_OPTS.map(opt => {
-                  const wc = WATER_COLOR[opt.value] ?? { color: '#6e6e73', bg: '#f5f5f7' }
+                  const wc = WATER_COLOR[opt.value] ?? { color: '#6e6e73', bg: '#F2F0EA' }
                   const active = form.water_type === opt.value
                   return (
                     <button key={opt.value} type="button"
@@ -578,10 +578,10 @@ function AddItemModal({ setupId, onClose, onAdded }) {
             {error && (
               <div style={{
                 display: 'flex', gap: 10, alignItems: 'flex-start',
-                background: '#fff2f2', border: '1px solid #ffd5d2',
+                background: '#FBEDEA', border: '1px solid #ffd5d2',
                 borderRadius: 10, padding: '12px 14px',
               }}>
-                <AlertTriangle size={15} color="#ff3b30" style={{ flexShrink: 0, marginTop: 1 }} />
+                <AlertTriangle size={15} color="#C0392B" style={{ flexShrink: 0, marginTop: 1 }} />
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 12, fontWeight: 600, color: '#c0392b', marginBottom: 2 }}>
                     Can't add this item
@@ -589,7 +589,7 @@ function AddItemModal({ setupId, onClose, onAdded }) {
                   <div style={{ fontSize: 12, color: '#c0392b', lineHeight: 1.5 }}>{error}</div>
                 </div>
                 <button type="button" onClick={() => setError('')}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff3b30', padding: 0, flexShrink: 0 }}>
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#C0392B', padding: 0, flexShrink: 0 }}>
                   <X size={13} />
                 </button>
               </div>

@@ -10,7 +10,7 @@ import {
 } from '../api/client'
 import { Download, RefreshCw } from 'lucide-react'
 
-const APPLE_COLORS = ['#0071e3', '#32ade6', '#34c759', '#bf5af2', '#ff9500', '#ff3b30', '#ff2d55']
+const APPLE_COLORS = ['#33607E', '#4A7BA6', '#1F7A45', '#61548A', '#B7791F', '#C0392B', '#ff2d55']
 
 const TOOLTIP_STYLE = {
   contentStyle: {
@@ -164,9 +164,9 @@ function MonthlySalesReport({ dateFrom, dateTo }) {
                 <Tooltip {...TOOLTIP_STYLE} formatter={v => `$${Number(v).toFixed(2)}`} />
                 <Legend wrapperStyle={{ fontSize: 12 }} />
                 <Line type="monotone" dataKey="TOTAL_REVENUE" name="Revenue"
-                  stroke="#0071e3" strokeWidth={2.5} dot={{ r: 4, fill: '#0071e3' }} />
+                  stroke="#33607E" strokeWidth={2.5} dot={{ r: 4, fill: '#33607E' }} />
                 <Line type="monotone" dataKey="ORDER_COUNT" name="Orders"
-                  stroke="#34c759" strokeWidth={2.5} dot={{ r: 4, fill: '#34c759' }} />
+                  stroke="#1F7A45" strokeWidth={2.5} dot={{ r: 4, fill: '#1F7A45' }} />
               </LineChart>
             </ResponsiveContainer>
           )
@@ -235,7 +235,7 @@ function BestSellersReport({ dateFrom, dateTo }) {
                   <XAxis type="number" tick={TICK} axisLine={false} tickLine={false} />
                   <YAxis dataKey="PRODUCT_NAME" type="category" width={130} tick={TICK} axisLine={false} tickLine={false} />
                   <Tooltip {...TOOLTIP_STYLE} />
-                  <Bar dataKey="TOTAL_SOLD" name="Units Sold" fill="#32ade6" radius={[0, 5, 5, 0]} />
+                  <Bar dataKey="TOTAL_SOLD" name="Units Sold" fill="#4A7BA6" radius={[0, 5, 5, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             )
@@ -332,7 +332,7 @@ function ProfitReport({ dateFrom, dateTo }) {
             <tr key={i}
               onMouseEnter={e => e.currentTarget.style.background = '#f9f9fb'}
               onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-              <td className="table-td" style={{ fontFamily: 'monospace', color: '#0071e3', fontWeight: 600 }}>#{r.ORDER_ID}</td>
+              <td className="table-td" style={{ fontFamily: 'monospace', color: '#33607E', fontWeight: 600 }}>#{r.ORDER_ID}</td>
               <td className="table-td">{r.CUSTOMER_NAME ?? r.CUSTOMER_ID}</td>
               <td className="table-td" style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>${Number(r.REVENUE ?? 0).toFixed(2)}</td>
               <td className="table-td" style={{ textAlign: 'right', color: '#6e6e73', fontVariantNumeric: 'tabular-nums' }}>${Number(r.COGS ?? 0).toFixed(2)}</td>
@@ -384,7 +384,7 @@ function FastMoversReport({ dateFrom, dateTo }) {
                 <XAxis dataKey="PRODUCT_NAME" tick={{ ...TICK, fontSize: 10 }} angle={-30} textAnchor="end" axisLine={false} tickLine={false} />
                 <YAxis tick={TICK} axisLine={false} tickLine={false} />
                 <Tooltip {...TOOLTIP_STYLE} />
-                <Bar dataKey="UNITS_SOLD_30D" name="Units (30d)" fill="#bf5af2" radius={[5, 5, 0, 0]} />
+                <Bar dataKey="UNITS_SOLD_30D" name="Units (30d)" fill="#61548A" radius={[5, 5, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           )

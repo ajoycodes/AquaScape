@@ -8,12 +8,12 @@
  */
 
 const TYPE_CONFIG = {
-  PROCEDURE: { color: '#bf5af2', bg: 'rgba(191,90,242,0.12)', label: 'PROC' },
-  FUNCTION:  { color: '#ff9500', bg: 'rgba(255,149,0,0.12)',  label: 'FUNC' },
-  TRIGGER:   { color: '#ff3b30', bg: 'rgba(255,59,48,0.12)',  label: 'TRG'  },
-  VIEW:      { color: '#0071e3', bg: 'rgba(0,113,227,0.10)',  label: 'VIEW' },
-  TABLE:     { color: '#34c759', bg: 'rgba(52,199,89,0.12)',  label: 'TBL'  },
-  INDEX:     { color: '#32ade6', bg: 'rgba(50,173,230,0.12)', label: 'IDX'  },
+  PROCEDURE: { color: '#61548A', bg: 'rgba(191,90,242,0.12)', label: 'PROC' },
+  FUNCTION:  { color: '#B7791F', bg: 'rgba(255,149,0,0.12)',  label: 'FUNC' },
+  TRIGGER:   { color: '#C0392B', bg: 'rgba(255,59,48,0.12)',  label: 'TRG'  },
+  VIEW:      { color: '#33607E', bg: 'rgba(22,21,15,0.10)',  label: 'VIEW' },
+  TABLE:     { color: '#1F7A45', bg: 'rgba(52,199,89,0.12)',  label: 'TBL'  },
+  INDEX:     { color: '#4A7BA6', bg: 'rgba(50,173,230,0.12)', label: 'IDX'  },
 }
 
 export default function OracleBadge({ type, name, detail, inline = false, style: extStyle }) {

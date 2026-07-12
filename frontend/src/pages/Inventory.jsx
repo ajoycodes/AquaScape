@@ -44,7 +44,7 @@ export default function Inventory() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      {error && <div style={{ color: '#ff3b30', fontSize: 13 }}>{error}</div>}
+      {error && <div style={{ color: '#C0392B', fontSize: 13 }}>{error}</div>}
 
       {/* Segment control */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -58,7 +58,7 @@ export default function Inventory() {
             Low-Stock Alerts
             {alerts.length > 0 && tab !== 'alerts' && (
               <span style={{
-                marginLeft: 6, background: '#ff3b30', color: 'white',
+                marginLeft: 6, background: '#C0392B', color: 'white',
                 fontSize: 10, fontWeight: 700, borderRadius: 9999,
                 padding: '1px 5px', lineHeight: 1.4,
               }}>
@@ -132,10 +132,10 @@ export default function Inventory() {
             : alerts.map(a => (
               <div key={a.ALERT_ID} className="card" style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 18px' }}>
                 <div style={{
-                  width: 36, height: 36, borderRadius: 10, background: '#fff0d9',
+                  width: 36, height: 36, borderRadius: 10, background: '#FBF3E4',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                 }}>
-                  <AlertTriangle size={16} color="#ff9500" strokeWidth={2} />
+                  <AlertTriangle size={16} color="#B7791F" strokeWidth={2} />
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 13, fontWeight: 600, color: '#1d1d1f' }}>{a.PRODUCT_NAME}</div>
@@ -201,7 +201,7 @@ function AdjustModal({ product, onClose, onSubmit }) {
               Product: <strong style={{ color: '#1d1d1f' }}>{product.PRODUCT_NAME}</strong>
               {' '}· Current stock: <strong style={{ color: '#1d1d1f' }}>{product.QTY_ON_HAND}</strong>
             </div>
-            {error && <div style={{ color: '#ff3b30', fontSize: 13 }}>{error}</div>}
+            {error && <div style={{ color: '#C0392B', fontSize: 13 }}>{error}</div>}
             <div>
               <label className="field-label">Delta (+ to add, − to remove)</label>
               <input className="input" type="number" required value={delta}
