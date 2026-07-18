@@ -1,4 +1,4 @@
-# 🗄️ AquaScape Database Schema Data Dictionary
+# AquaScape Database Schema Data Dictionary
 
 This document provides a formal, Data Dictionary-style specification of the AquaScape Oracle Database schema. It is derived from the current SQL files in `database/schema` and records the physical column names, Oracle data types, nullability, defaults, keys, checks, and referential actions.
 
