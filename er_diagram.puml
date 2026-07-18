@@ -174,10 +174,12 @@ package "BUILDER DOMAIN  ·  8 Tables" #F0FDF4 {
   entity CUSTOMERS <<builder>> {
     * customer_id : NUMBER <<PK>>
     --
-    user_id : NUMBER <<FK>>
-    shipping_address : VARCHAR2(500)
-    billing_address : VARCHAR2(500)
-    loyalty_points : NUMBER
+    first_name / last_name : VARCHAR2(60)
+    email : VARCHAR2(100) <<unique>>
+    password_hash : VARCHAR2(255)
+    phone : VARCHAR2(20)
+    address / city / country : VARCHAR2
+    is_active : NUMBER(1)
     created_at : DATE
   }
 
@@ -402,7 +404,6 @@ DECORATIONS     ||--||  PRODUCTS            : "is a"
 ' ─────────────────────────────────────────────────────────────
 ' RELATIONSHIPS — BUILDER
 ' ─────────────────────────────────────────────────────────────
-CUSTOMERS       ||--||  USERS               : "has account"
 CART            }o--||  CUSTOMERS           : "belongs to"
 CART_ITEMS      }o--||  CART                : "in"
 CART_ITEMS      }o--||  PRODUCTS            : "refers to"
