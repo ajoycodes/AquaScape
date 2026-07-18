@@ -1,7 +1,4 @@
--- ============================================================
--- SEED: INVENTORY ADJUSTMENTS & MOVEMENTS
 -- Simulates some prior stock activity to populate movement log.
--- ============================================================
 
 PROMPT Seeding inventory history...
 

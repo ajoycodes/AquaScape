@@ -1,12 +1,9 @@
--- ============================================================
--- SEED CLEANUP / RESET SCRIPT
 -- Run this BEFORE re-seeding to wipe all data cleanly.
 -- Deletes in reverse FK order, then resets all sequences.
--- ============================================================
 
 PROMPT Cleaning up existing seed data...
 
--- ── Dependent detail tables (deepest first) ─────────────────
+-- Dependent detail tables (deepest first)
 DELETE FROM return_items;
 DELETE FROM returns;
 DELETE FROM payments;
@@ -29,14 +26,14 @@ DELETE FROM supplier_po;
 DELETE FROM inventory_movements;
 DELETE FROM inventory;
 
--- ── Product sub-type tables ──────────────────────────────────
+-- Product sub-type tables
 DELETE FROM fish;
 DELETE FROM plants;
 DELETE FROM equipment;
 DELETE FROM decorations;
 DELETE FROM tanks;
 
--- ── Master tables ────────────────────────────────────────────
+-- Master tables
 DELETE FROM products;
 DELETE FROM discounts;
 DELETE FROM categories;
@@ -45,13 +42,13 @@ DELETE FROM users;
 DELETE FROM roles;
 DELETE FROM suppliers;
 
--- ── Audit log ────────────────────────────────────────────────
+-- Audit log
 DELETE FROM audit_log;
 
 COMMIT;
 PROMPT All data deleted.
 
--- ── Reset sequences ──────────────────────────────────────────
+-- Reset sequences
 ALTER SEQUENCE seq_role      RESTART START WITH 1;
 ALTER SEQUENCE seq_user      RESTART START WITH 1;
 ALTER SEQUENCE seq_customer  RESTART START WITH 1;

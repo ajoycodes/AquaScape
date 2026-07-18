@@ -1,14 +1,8 @@
--- ============================================================
--- MODULE 6d: SUPPLIER & RETURN PROCEDURES
 -- create_supplier_po / approve_supplier_po / receive_supplier_po
 -- process_return
--- ============================================================
 
--- ============================================================
--- PROCEDURE: create_supplier_po
 -- Creates a draft purchase order to a supplier.
 -- Items are added separately via add_po_item.
--- ============================================================
 CREATE OR REPLACE PROCEDURE create_supplier_po (
     p_supplier_id   IN  NUMBER,
     p_user_id       IN  NUMBER,
@@ -38,10 +32,7 @@ EXCEPTION
 END create_supplier_po;
 /
 
--- ============================================================
--- PROCEDURE: add_po_item
 -- Adds a product line item to a DRAFT purchase order.
--- ============================================================
 CREATE OR REPLACE PROCEDURE add_po_item (
     p_po_id         IN NUMBER,
     p_product_id    IN NUMBER,
@@ -79,10 +70,7 @@ EXCEPTION
 END add_po_item;
 /
 
--- ============================================================
--- PROCEDURE: submit_supplier_po
 -- Moves PO from DRAFT to SUBMITTED for approval.
--- ============================================================
 CREATE OR REPLACE PROCEDURE submit_supplier_po (
     p_po_id     IN NUMBER,
     p_user_id   IN NUMBER
@@ -113,10 +101,7 @@ EXCEPTION
 END submit_supplier_po;
 /
 
--- ============================================================
--- PROCEDURE: approve_supplier_po
 -- Manager/admin approves a submitted PO.
--- ============================================================
 CREATE OR REPLACE PROCEDURE approve_supplier_po (
     p_po_id     IN NUMBER,
     p_user_id   IN NUMBER
@@ -140,11 +125,8 @@ EXCEPTION
 END approve_supplier_po;
 /
 
--- ============================================================
--- PROCEDURE: receive_supplier_po
 -- Records receipt of goods: increases inventory, creates batches.
 -- Marks PO status as RECEIVED.
--- ============================================================
 CREATE OR REPLACE PROCEDURE receive_supplier_po (
     p_po_id     IN NUMBER,
     p_user_id   IN NUMBER
@@ -209,11 +191,8 @@ EXCEPTION
 END receive_supplier_po;
 /
 
--- ============================================================
--- PROCEDURE: process_return
 -- Approves or rejects a return request.
 -- On approval: restocks GOOD items, issues refund payment record.
--- ============================================================
 CREATE OR REPLACE PROCEDURE process_return (
     p_return_id IN NUMBER,
     p_user_id   IN NUMBER,

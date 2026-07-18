@@ -1,14 +1,8 @@
--- ============================================================
--- MODULE 6c: ORDER PROCEDURES
 -- place_order / cancel_order / update_order_status
--- ============================================================
 
--- ============================================================
--- PROCEDURE: place_order
 -- Converts a customer cart into a confirmed order.
 -- Validates stock, resolves discounts, creates order + items,
 -- deducts inventory, clears cart. Full ACID transaction.
--- ============================================================
 CREATE OR REPLACE PROCEDURE place_order (
     p_customer_id   IN  NUMBER,
     p_setup_id      IN  NUMBER   DEFAULT NULL,
@@ -142,11 +136,8 @@ EXCEPTION
 END place_order;
 /
 
--- ============================================================
--- PROCEDURE: cancel_order
 -- Cancels an order and restores inventory.
 -- Cannot cancel SHIPPED or DELIVERED orders.
--- ============================================================
 CREATE OR REPLACE PROCEDURE cancel_order (
     p_order_id  IN NUMBER,
     p_user_id   IN NUMBER,
@@ -201,10 +192,7 @@ EXCEPTION
 END cancel_order;
 /
 
--- ============================================================
--- PROCEDURE: update_order_status
 -- Moves order through its state machine.
--- ============================================================
 CREATE OR REPLACE PROCEDURE update_order_status (
     p_order_id      IN NUMBER,
     p_new_status    IN VARCHAR2,

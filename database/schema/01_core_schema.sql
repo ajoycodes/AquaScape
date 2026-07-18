@@ -1,11 +1,6 @@
--- ============================================================
--- MODULE 2: AQUASCAPE CORE DATABASE SCHEMA
 -- Run as AQUASCAPE user
--- ============================================================
 
--- ============================================================
 -- SEQUENCES
--- ============================================================
 
 CREATE SEQUENCE seq_role      START WITH 1    INCREMENT BY 1 NOCACHE NOCYCLE;
 CREATE SEQUENCE seq_user      START WITH 1    INCREMENT BY 1 NOCACHE NOCYCLE;
@@ -20,10 +15,7 @@ CREATE SEQUENCE seq_plant     START WITH 1    INCREMENT BY 1 NOCACHE NOCYCLE;
 CREATE SEQUENCE seq_equipment START WITH 1    INCREMENT BY 1 NOCACHE NOCYCLE;
 CREATE SEQUENCE seq_deco      START WITH 1    INCREMENT BY 1 NOCACHE NOCYCLE;
 
--- ============================================================
--- TABLE: ROLES
 -- System role definitions (Admin, Staff, Customer)
--- ============================================================
 CREATE TABLE roles (
     role_id     NUMBER          DEFAULT seq_role.NEXTVAL   NOT NULL,
     role_name   VARCHAR2(50)    NOT NULL,
@@ -39,10 +31,7 @@ COMMENT ON TABLE  roles           IS 'System role definitions for access control
 COMMENT ON COLUMN roles.role_id   IS 'Primary key — auto from seq_role';
 COMMENT ON COLUMN roles.role_name IS 'Unique role label e.g. ADMIN, STAFF, CUSTOMER';
 
--- ============================================================
--- TABLE: USERS
 -- Admin and staff accounts with role assignment
--- ============================================================
 CREATE TABLE users (
     user_id       NUMBER          DEFAULT seq_user.NEXTVAL  NOT NULL,
     role_id       NUMBER          NOT NULL,
@@ -65,10 +54,7 @@ COMMENT ON TABLE  users             IS 'Admin and staff accounts';
 COMMENT ON COLUMN users.is_active   IS '1 = active, 0 = suspended';
 COMMENT ON COLUMN users.password_hash IS 'Bcrypt hashed password — never store plain text';
 
--- ============================================================
--- TABLE: CUSTOMERS
 -- Registered buyers / hobbyists
--- ============================================================
 CREATE TABLE customers (
     customer_id   NUMBER          DEFAULT seq_customer.NEXTVAL  NOT NULL,
     first_name    VARCHAR2(60)    NOT NULL,
@@ -89,10 +75,7 @@ CREATE TABLE customers (
 
 COMMENT ON TABLE customers IS 'Registered customer / buyer profiles';
 
--- ============================================================
--- TABLE: SUPPLIERS
 -- Vendors who supply fish, plants, equipment
--- ============================================================
 CREATE TABLE suppliers (
     supplier_id   NUMBER          DEFAULT seq_supplier.NEXTVAL  NOT NULL,
     supplier_name VARCHAR2(150)   NOT NULL,
@@ -113,10 +96,7 @@ CREATE TABLE suppliers (
 
 COMMENT ON TABLE suppliers IS 'Vendor / supplier profiles for procurement';
 
--- ============================================================
--- TABLE: CATEGORIES
 -- Self-referencing taxonomy (parent → child categories)
--- ============================================================
 CREATE TABLE categories (
     category_id   NUMBER          DEFAULT seq_category.NEXTVAL  NOT NULL,
     category_name VARCHAR2(100)   NOT NULL,
@@ -133,10 +113,7 @@ CREATE TABLE categories (
 COMMENT ON TABLE  categories           IS 'Self-referencing product taxonomy';
 COMMENT ON COLUMN categories.parent_id IS 'NULL = root category; references own table for hierarchy';
 
--- ============================================================
--- TABLE: PRODUCTS
 -- Master product catalog — all sellable items
--- ============================================================
 CREATE TABLE products (
     product_id    NUMBER          DEFAULT seq_product.NEXTVAL   NOT NULL,
     category_id   NUMBER          NOT NULL,
@@ -164,10 +141,7 @@ COMMENT ON TABLE  products              IS 'Master catalog for all sellable item
 COMMENT ON COLUMN products.product_type IS 'FISH | PLANT | TANK | EQUIPMENT | DECORATION';
 COMMENT ON COLUMN products.cost_price   IS 'Supplier cost — used for profit margin calculation';
 
--- ============================================================
--- TABLE: INVENTORY
 -- One record per product — current stock levels
--- ============================================================
 CREATE TABLE inventory (
     inventory_id    NUMBER          DEFAULT seq_inventory.NEXTVAL  NOT NULL,
     product_id      NUMBER          NOT NULL,
@@ -190,10 +164,7 @@ COMMENT ON TABLE  inventory               IS 'Per-product stock levels and reord
 COMMENT ON COLUMN inventory.qty_reserved  IS 'Units in open cart / pending orders — cannot be sold again';
 COMMENT ON COLUMN inventory.reorder_level IS 'Triggers low stock alert when qty_on_hand reaches this value';
 
--- ============================================================
--- TABLE: TANKS
 -- Aquarium tank specifications (links to PRODUCTS)
--- ============================================================
 CREATE TABLE tanks (
     tank_id         NUMBER          DEFAULT seq_tank.NEXTVAL   NOT NULL,
     product_id      NUMBER          NOT NULL,
@@ -216,10 +187,7 @@ CREATE TABLE tanks (
 
 COMMENT ON TABLE tanks IS 'Detailed tank specifications linked to product catalog';
 
--- ============================================================
--- TABLE: FISH
 -- Fish species specifications (links to PRODUCTS)
--- ============================================================
 CREATE TABLE fish (
     fish_id               NUMBER          DEFAULT seq_fish.NEXTVAL   NOT NULL,
     product_id            NUMBER          NOT NULL,
@@ -254,10 +222,7 @@ COMMENT ON COLUMN fish.water_type         IS 'FRESHWATER | SALTWATER | BRACKISH'
 COMMENT ON COLUMN fish.is_aggressive      IS '1 = aggressive — used by compatibility checker';
 COMMENT ON COLUMN fish.max_fish_per_liter IS 'Stocking density cap for tank capacity validation';
 
--- ============================================================
--- TABLE: PLANTS
 -- Aquatic plant specifications (links to PRODUCTS)
--- ============================================================
 CREATE TABLE plants (
     plant_id            NUMBER          DEFAULT seq_plant.NEXTVAL  NOT NULL,
     product_id          NUMBER          NOT NULL,
@@ -284,10 +249,7 @@ CREATE TABLE plants (
 
 COMMENT ON TABLE plants IS 'Aquatic plant catalog with lighting and CO2 requirements';
 
--- ============================================================
--- TABLE: EQUIPMENT
 -- Filters, heaters, lights, pumps (links to PRODUCTS)
--- ============================================================
 CREATE TABLE equipment (
     equipment_id        NUMBER          DEFAULT seq_equipment.NEXTVAL  NOT NULL,
     product_id          NUMBER          NOT NULL,
@@ -313,10 +275,7 @@ CREATE TABLE equipment (
 COMMENT ON TABLE  equipment                IS 'Equipment catalog with suitability ranges per tank size';
 COMMENT ON COLUMN equipment.equipment_type IS 'FILTER|HEATER|LIGHT|PUMP|CO2_SYSTEM|SKIMMER|UV_STERILIZER|OTHER';
 
--- ============================================================
--- TABLE: DECORATIONS
 -- Rocks, driftwood, substrates (links to PRODUCTS)
--- ============================================================
 CREATE TABLE decorations (
     decoration_id   NUMBER          DEFAULT seq_deco.NEXTVAL   NOT NULL,
     product_id      NUMBER          NOT NULL,
@@ -337,9 +296,7 @@ CREATE TABLE decorations (
 
 COMMENT ON TABLE decorations IS 'Decoration catalog — rocks, wood, substrate, ornaments';
 
--- ============================================================
 -- VERIFY CREATION
--- ============================================================
 SELECT table_name, num_rows
 FROM user_tables
 WHERE table_name IN (

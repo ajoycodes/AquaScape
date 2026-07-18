@@ -1,8 +1,5 @@
--- ============================================================
--- MODULE 5: CUSTOMER AUTH MIGRATION
 -- Adds password authentication to customer accounts.
 -- Run as AQUASCAPE user.
--- ============================================================
 
 -- Customers authenticate with email + password (scrypt salt:hash)
 ALTER TABLE customers ADD (password_hash VARCHAR2(255));

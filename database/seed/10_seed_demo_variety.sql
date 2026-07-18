@@ -1,20 +1,11 @@
--- ============================================================
--- SEED: DEMO VARIETY - products that exercise every
--- compatibility check in the engine.
---
---   WATER (instant trigger block) : Figure-8 Puffer (BRACKISH),
---                                   Chaeto Macroalgae (SALTWATER plant),
---                                   Live Rock (SALTWATER-only decoration)
---   TEMPERATURE (review check)    : Fancy Goldfish (18-22 C coldwater),
---                                   Blue Diamond Discus (28-31 C)
---   CAPACITY (review check)       : Oscar Cichlid (needs 200L per fish)
---   PAIRWISE RULES (instant block): Tiger Barb (fin nipper),
---                                   Cherry Shrimp (universal prey)
--- ============================================================
+-- Extra products chosen to trigger the compatibility checks:
+-- water-type blocks (puffer, chaeto, live rock), temperature fails
+-- (goldfish, discus), capacity fail (oscar) and pairwise rules
+-- (tiger barb, cherry shrimp).
 
 PROMPT Seeding demo variety products...
 
--- -- Fancy Goldfish - coldwater, fails temp check in tropical setups --
+-- Fancy Goldfish - coldwater, fails temp check in tropical setups
 DECLARE
     v_pid NUMBER;
 BEGIN
@@ -36,7 +27,7 @@ BEGIN
 END;
 /
 
--- -- Blue Diamond Discus - needs very warm water (28-31 C) --
+-- Blue Diamond Discus - needs very warm water (28-31 C)
 DECLARE
     v_pid NUMBER;
 BEGIN
@@ -58,7 +49,7 @@ BEGIN
 END;
 /
 
--- -- Figure-8 Puffer - BRACKISH water, blocked in fresh AND salt setups --
+-- Figure-8 Puffer - BRACKISH water, blocked in fresh AND salt setups
 DECLARE
     v_pid NUMBER;
 BEGIN
@@ -80,7 +71,7 @@ BEGIN
 END;
 /
 
--- -- Oscar Cichlid - huge, aggressive, needs ~200L per fish --
+-- Oscar Cichlid - huge, aggressive, needs ~200L per fish
 DECLARE
     v_pid NUMBER;
 BEGIN
@@ -102,7 +93,7 @@ BEGIN
 END;
 /
 
--- -- Tiger Barb - notorious fin nipper, pairwise conflicts --
+-- Tiger Barb - notorious fin nipper, pairwise conflicts
 DECLARE
     v_pid NUMBER;
 BEGIN
@@ -124,7 +115,7 @@ BEGIN
 END;
 /
 
--- -- Cherry Shrimp - everyone's lunch, pairwise prey rules --
+-- Cherry Shrimp - everyone's lunch, pairwise prey rules
 DECLARE
     v_pid NUMBER;
 BEGIN
@@ -146,7 +137,7 @@ BEGIN
 END;
 /
 
--- -- Chaeto Macroalgae - SALTWATER plant, blocked in freshwater --
+-- Chaeto Macroalgae - SALTWATER plant, blocked in freshwater
 DECLARE
     v_pid NUMBER;
 BEGIN
@@ -167,7 +158,7 @@ BEGIN
 END;
 /
 
--- -- Live Rock - SALTWATER-only decoration, fails water check in fresh --
+-- Live Rock - SALTWATER-only decoration, fails water check in fresh
 DECLARE
     v_pid NUMBER;
 BEGIN
@@ -187,9 +178,7 @@ BEGIN
 END;
 /
 
--- ============================================================
 -- PAIRWISE COMPATIBILITY RULES
--- ============================================================
 
 -- Oscar eats every small fish and invertebrate
 INSERT INTO compatibility_rules (rule_id, product_id_a, product_id_b, rule_type, severity, reason)

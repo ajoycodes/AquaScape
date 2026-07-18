@@ -1,8 +1,5 @@
--- ============================================================
--- MODULE 12: SEED DATA — MASTER FILE
 -- Run this after all schema + procedures + triggers + views.
 -- Calls each seed file in dependency order.
--- ============================================================
 
 PROMPT ============================================================
 PROMPT AquaScape Seed Data — Starting...

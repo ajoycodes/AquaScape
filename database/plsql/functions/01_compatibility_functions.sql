@@ -1,16 +1,10 @@
--- ============================================================
--- MODULE 7: PL/SQL FUNCTIONS
 -- All functions return scalar values used by procedures,
 -- triggers, views, and the API layer.
--- ============================================================
 
--- ============================================================
--- FUNCTION: check_compatibility
 -- Returns the count of HARD (ERROR-severity) compatibility
 -- conflicts between a candidate product and all items
 -- already in the given setup.
 -- Returns 0 = safe to add | >0 = conflicts exist
--- ============================================================
 CREATE OR REPLACE FUNCTION check_compatibility (
     p_setup_id      IN NUMBER,
     p_product_id    IN NUMBER
@@ -35,10 +29,7 @@ EXCEPTION
 END check_compatibility;
 /
 
--- ============================================================
--- FUNCTION: get_compatibility_warnings
 -- Returns WARNING-level conflicts (informational, not blocking).
--- ============================================================
 CREATE OR REPLACE FUNCTION get_compatibility_warnings (
     p_setup_id      IN NUMBER,
     p_product_id    IN NUMBER
@@ -62,11 +53,8 @@ EXCEPTION
 END get_compatibility_warnings;
 /
 
--- ============================================================
--- FUNCTION: validate_tank_capacity
 -- Returns 1 if stocking density is within limits, 0 if overstocked.
 -- Uses fish.max_fish_per_liter when available, else 1-per-10L rule.
--- ============================================================
 CREATE OR REPLACE FUNCTION validate_tank_capacity (
     p_setup_id IN NUMBER
 ) RETURN NUMBER AS
@@ -115,11 +103,8 @@ EXCEPTION
 END validate_tank_capacity;
 /
 
--- ============================================================
--- FUNCTION: validate_water_type
 -- Returns 1 if ALL fish and plants in the setup match the
 -- setup's declared water_type. Returns 0 if any mismatch.
--- ============================================================
 CREATE OR REPLACE FUNCTION validate_water_type (
     p_setup_id IN NUMBER
 ) RETURN NUMBER AS
@@ -169,11 +154,8 @@ EXCEPTION
 END validate_water_type;
 /
 
--- ============================================================
--- FUNCTION: validate_temperature
 -- Returns 1 if all fish share an overlapping temperature range.
 -- Returns 0 if ranges are mutually exclusive.
--- ============================================================
 CREATE OR REPLACE FUNCTION validate_temperature (
     p_setup_id IN NUMBER
 ) RETURN NUMBER AS
@@ -200,10 +182,7 @@ EXCEPTION
 END validate_temperature;
 /
 
--- ============================================================
--- FUNCTION: get_setup_total_price
 -- Returns the sum of all item prices + tank price for a setup.
--- ============================================================
 CREATE OR REPLACE FUNCTION get_setup_total_price (
     p_setup_id IN NUMBER
 ) RETURN NUMBER AS
@@ -233,11 +212,8 @@ EXCEPTION
 END get_setup_total_price;
 /
 
--- ============================================================
--- FUNCTION: check_availability
 -- Returns 1 if enough available (on_hand - reserved) stock exists.
 -- Returns 0 if insufficient or product has no inventory record.
--- ============================================================
 CREATE OR REPLACE FUNCTION check_availability (
     p_product_id    IN NUMBER,
     p_quantity      IN NUMBER
@@ -257,11 +233,8 @@ EXCEPTION
 END check_availability;
 /
 
--- ============================================================
--- FUNCTION: calc_order_profit
 -- Returns gross profit for a given order_id.
 -- Profit = revenue - cost of goods sold
--- ============================================================
 CREATE OR REPLACE FUNCTION calc_order_profit (
     p_order_id IN NUMBER
 ) RETURN NUMBER AS
@@ -282,10 +255,7 @@ EXCEPTION
 END calc_order_profit;
 /
 
--- ============================================================
--- FUNCTION: get_product_stock
 -- Simple utility — returns current qty_on_hand for a product.
--- ============================================================
 CREATE OR REPLACE FUNCTION get_product_stock (
     p_product_id IN NUMBER
 ) RETURN NUMBER AS

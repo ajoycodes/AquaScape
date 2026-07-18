@@ -1,12 +1,9 @@
--- ============================================================
--- SEED: ORDERS & ORDER HISTORY
 -- Uses place_order procedure via cart → order flow.
 -- Also simulates some historical orders directly for reports.
--- ============================================================
 
 PROMPT Seeding orders...
 
--- ── Method 1: Full cart→order flow (procedure-driven) ────────
+-- Method 1: Full cart→order flow (procedure-driven)
 
 -- Customer 1 (Emma) buys Neon Tetras, Java Fern, HOB Filter
 DECLARE
@@ -212,7 +209,7 @@ BEGIN
 END;
 /
 
--- ── Method 2: Backdated direct inserts for monthly report variety ──
+-- Method 2: Backdated direct inserts for monthly report variety
 -- Disable trigger to avoid ORA-04091 mutating table error
 ALTER TRIGGER TRG_UPDATE_ORDER_TOTAL DISABLE;
 
@@ -280,7 +277,7 @@ END;
 -- Re-enable trigger after direct inserts
 ALTER TRIGGER TRG_UPDATE_ORDER_TOTAL ENABLE;
 
--- ── Aquarium Builder Setup Demo ────────────────────────────────
+-- Aquarium Builder Setup Demo
 
 -- Create a demo setup for Emma (freshwater community tank)
 DECLARE

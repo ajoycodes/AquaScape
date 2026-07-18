@@ -1,7 +1,4 @@
--- ============================================================
--- SEED: CUSTOMERS (10 realistic records)
 -- Each customer also gets an empty cart (via MERGE).
--- ============================================================
 
 PROMPT Seeding customers...
 

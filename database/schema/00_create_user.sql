@@ -1,7 +1,5 @@
--- ============================================================
 -- AQUASCAPE — Oracle User & Privilege Setup
 -- Run this as SYSDBA (SYS or SYSTEM user)
--- ============================================================
 
 -- Create dedicated schema user
 CREATE USER AQUASCAPE IDENTIFIED BY AquaScape123

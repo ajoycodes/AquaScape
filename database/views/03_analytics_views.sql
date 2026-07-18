@@ -1,11 +1,5 @@
--- ============================================================
--- MODULE 9c: ANALYTICS & REPORTING VIEWS
--- ============================================================
 
--- ============================================================
--- VIEW: vw_profit_analysis
 -- Per-order profit margin analysis.
--- ============================================================
 CREATE OR REPLACE VIEW vw_profit_analysis AS
 SELECT
     o.order_id,
@@ -30,10 +24,7 @@ ORDER BY o.order_date DESC;
 
 COMMENT ON TABLE vw_profit_analysis IS 'Per-order gross profit and margin — calls calc_order_profit()';
 
--- ============================================================
--- VIEW: vw_popular_setups
 -- Saved aquarium setups ranked by item count and estimated value.
--- ============================================================
 CREATE OR REPLACE VIEW vw_popular_setups AS
 SELECT
     asu.setup_id,
@@ -59,10 +50,7 @@ GROUP BY asu.setup_id, asu.setup_name, c.first_name, c.last_name,
          ss.is_public, ss.share_code, ss.saved_at
 ORDER BY estimated_value DESC;
 
--- ============================================================
--- VIEW: vw_compatibility_failure_report
 -- All INCOMPATIBLE rules with how often they've been encountered.
--- ============================================================
 CREATE OR REPLACE VIEW vw_compatibility_failure_report AS
 SELECT
     cr.rule_id,
@@ -80,11 +68,8 @@ LEFT JOIN users u ON cr.created_by = u.user_id
 WHERE cr.rule_type = 'INCOMPATIBLE'
 ORDER BY cr.severity DESC, cr.created_at DESC;
 
--- ============================================================
--- VIEW: vw_product_rating_analysis
 -- Products by type, price tier, and sales performance.
 -- Simulates a rating based on sell-through velocity.
--- ============================================================
 CREATE OR REPLACE VIEW vw_product_rating_analysis AS
 SELECT
     p.product_id,
@@ -129,10 +114,7 @@ LEFT JOIN (
 WHERE p.is_active = 1
 ORDER BY popularity_score DESC, units_sold DESC;
 
--- ============================================================
--- VIEW: vw_audit_log_summary
 -- Human-readable audit trail with context.
--- ============================================================
 CREATE OR REPLACE VIEW vw_audit_log_summary AS
 SELECT
     al.audit_id,
@@ -146,10 +128,7 @@ SELECT
 FROM audit_log al
 ORDER BY al.changed_at DESC;
 
--- ============================================================
--- VIEW: vw_dashboard_kpis
 -- Single-row KPI snapshot for the admin dashboard.
--- ============================================================
 CREATE OR REPLACE VIEW vw_dashboard_kpis AS
 SELECT
     (SELECT COUNT(*)          FROM orders     WHERE order_status NOT IN ('CANCELLED','REFUNDED'))     AS total_orders,

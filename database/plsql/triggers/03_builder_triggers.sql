@@ -1,18 +1,12 @@
--- ============================================================
--- MODULE 8c: AQUARIUM BUILDER TRIGGERS
 -- trg_compat_check         — block incompatible items at DB level
 -- trg_validate_water_item  — block wrong water-type items
 -- trg_cart_updated_at      — auto timestamp cart
 -- trg_discount_used_count  — validate max_uses not exceeded
--- ============================================================
 
--- ============================================================
--- TRIGGER: trg_compat_check
 -- Fires BEFORE INSERT on SETUP_ITEMS.
 -- Calls check_compatibility() — if conflicts > 0, RAISES error.
 -- This is the DB-level enforcement of the compatibility engine.
 -- Even if the application layer is bypassed, this trigger fires.
--- ============================================================
 CREATE OR REPLACE TRIGGER trg_compat_check
 BEFORE INSERT ON setup_items
 FOR EACH ROW
@@ -43,12 +37,9 @@ BEGIN
 END trg_compat_check;
 /
 
--- ============================================================
--- TRIGGER: trg_validate_water_item
 -- Fires BEFORE INSERT on SETUP_ITEMS.
 -- Rejects any fish or plant whose water_type does not match
 -- the setup's declared water_type.
--- ============================================================
 CREATE OR REPLACE TRIGGER trg_validate_water_item
 BEFORE INSERT ON setup_items
 FOR EACH ROW
@@ -98,10 +89,7 @@ EXCEPTION
 END trg_validate_water_item;
 /
 
--- ============================================================
--- TRIGGER: trg_cart_updated_at
 -- Fires BEFORE UPDATE on CART — keeps updated_at fresh.
--- ============================================================
 CREATE OR REPLACE TRIGGER trg_cart_updated_at
 BEFORE UPDATE ON cart
 FOR EACH ROW
@@ -110,11 +98,8 @@ BEGIN
 END trg_cart_updated_at;
 /
 
--- ============================================================
--- TRIGGER: trg_validate_cart_stock
 -- Fires BEFORE INSERT on CART_ITEMS.
 -- Prevents adding an out-of-stock product to cart.
--- ============================================================
 CREATE OR REPLACE TRIGGER trg_validate_cart_stock
 BEFORE INSERT ON cart_items
 FOR EACH ROW
@@ -133,11 +118,8 @@ BEGIN
 END trg_validate_cart_stock;
 /
 
--- ============================================================
--- TRIGGER: trg_discount_max_uses
 -- Fires BEFORE INSERT on ORDER_DISCOUNTS.
 -- Double-checks that discount has not exceeded max_uses.
--- ============================================================
 CREATE OR REPLACE TRIGGER trg_discount_max_uses
 BEFORE INSERT ON order_discounts
 FOR EACH ROW
@@ -163,11 +145,8 @@ EXCEPTION
 END trg_discount_max_uses;
 /
 
--- ============================================================
--- TRIGGER: trg_po_total_on_item_change
 -- Fires AFTER INSERT, UPDATE, DELETE on SUPPLIER_PO_ITEMS.
 -- Keeps supplier_po.total_amount in sync automatically.
--- ============================================================
 CREATE OR REPLACE TRIGGER trg_po_total_on_item_change
 AFTER INSERT OR UPDATE OR DELETE ON supplier_po_items
 FOR EACH ROW

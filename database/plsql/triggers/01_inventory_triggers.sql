@@ -1,18 +1,11 @@
--- ============================================================
--- MODULE 8a: INVENTORY TRIGGERS
 -- trg_deduct_stock         — auto-deduct after order item insert
 -- trg_no_negative_stock    — prevent negative qty
 -- trg_low_stock_alert      — auto-generate alert at reorder level
--- ============================================================
 
--- ============================================================
--- TRIGGER: trg_deduct_stock
 -- Fires AFTER each row inserted into ORDER_ITEMS.
 -- Deducts qty_on_hand and logs the movement.
 -- NOTE: The update_inventory procedure also does this, but the
--- trigger acts as the DB-level safety net even if called from
 -- raw SQL or a future integration.
--- ============================================================
 CREATE OR REPLACE TRIGGER trg_deduct_stock
 AFTER INSERT ON order_items
 FOR EACH ROW
@@ -58,11 +51,8 @@ EXCEPTION
 END trg_deduct_stock;
 /
 
--- ============================================================
--- TRIGGER: trg_no_negative_stock
 -- Fires BEFORE UPDATE on INVENTORY.
 -- Acts as the absolute last-resort guard against negative stock.
--- ============================================================
 CREATE OR REPLACE TRIGGER trg_no_negative_stock
 BEFORE UPDATE OF qty_on_hand ON inventory
 FOR EACH ROW
@@ -86,12 +76,9 @@ BEGIN
 END trg_no_negative_stock;
 /
 
--- ============================================================
--- TRIGGER: trg_low_stock_alert
 -- Fires AFTER UPDATE on INVENTORY qty_on_hand column.
 -- Inserts a new LOW_STOCK_ALERTS record if stock falls to
 -- or below reorder_level and no open alert already exists.
--- ============================================================
 CREATE OR REPLACE TRIGGER trg_low_stock_alert
 AFTER UPDATE OF qty_on_hand ON inventory
 FOR EACH ROW
@@ -119,13 +106,10 @@ BEGIN
 END trg_low_stock_alert;
 /
 
--- ============================================================
--- TRIGGER: trg_restore_stock_on_cancel
 -- Fires AFTER UPDATE on ORDERS when status changes to CANCELLED.
 -- Restores inventory for each line item in the cancelled order.
 -- Uses an AFTER statement-level trigger pattern with a
 -- compound trigger to avoid mutating table errors.
--- ============================================================
 CREATE OR REPLACE TRIGGER trg_auto_timestamp_inventory
 BEFORE UPDATE ON inventory
 FOR EACH ROW

@@ -1,11 +1,8 @@
--- ============================================================
--- SEED: PRODUCTS (Tanks, Fish, Plants, Equipment, Decorations)
 -- Calls add_product_to_inventory after each product insert.
--- ============================================================
 
 PROMPT Seeding products...
 
--- ── TANKS ──────────────────────────────────────────────────
+-- TANKS
 DECLARE
     v_pid NUMBER;
 BEGIN
@@ -101,7 +98,7 @@ BEGIN
 END;
 /
 
--- ── FRESHWATER FISH ────────────────────────────────────────
+-- FRESHWATER FISH
 DECLARE
     v_pid NUMBER;
 BEGIN
@@ -249,7 +246,7 @@ BEGIN
 END;
 /
 
--- ── SALTWATER FISH ─────────────────────────────────────────
+-- SALTWATER FISH
 DECLARE
     v_pid NUMBER;
 BEGIN
@@ -313,7 +310,7 @@ BEGIN
 END;
 /
 
--- ── PLANTS ─────────────────────────────────────────────────
+-- PLANTS
 DECLARE
     v_pid NUMBER;
 BEGIN
@@ -440,7 +437,7 @@ BEGIN
 END;
 /
 
--- ── EQUIPMENT ──────────────────────────────────────────────
+-- EQUIPMENT
 DECLARE
     v_pid NUMBER;
 BEGIN
@@ -593,7 +590,7 @@ BEGIN
 END;
 /
 
--- ── DECORATIONS ────────────────────────────────────────────
+-- DECORATIONS
 DECLARE
     v_pid NUMBER;
 BEGIN
@@ -702,7 +699,7 @@ BEGIN
 END;
 /
 
--- ── DISCOUNTS ──────────────────────────────────────────────
+-- DISCOUNTS
 INSERT INTO discounts (discount_id, code, discount_type, value, max_uses, used_count, valid_from, valid_until)
 SELECT seq_discount.NEXTVAL, 'WELCOME10', 'PERCENT', 10, 200, 0, SYSDATE, ADD_MONTHS(SYSDATE, 12)
 FROM DUAL WHERE NOT EXISTS (SELECT 1 FROM discounts WHERE code = 'WELCOME10');

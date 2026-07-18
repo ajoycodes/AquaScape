@@ -1,13 +1,10 @@
--- ============================================================
--- SEED: COMPATIBILITY RULES
 -- Demonstrates the compatibility engine with real-world rules.
 -- severity: ERROR = blocks insert, WARNING = advisory only
 -- rule_type: INCOMPATIBLE / REQUIRES / NEUTRAL
--- ============================================================
 
 PROMPT Seeding compatibility rules...
 
--- ── INCOMPATIBLE RULES (ERROR level) ─────────────────────────
+-- INCOMPATIBLE RULES (ERROR level)
 
 -- Betta vs Neon Tetra: bettas shred neon fins
 INSERT INTO compatibility_rules (rule_id, product_id_a, product_id_b, rule_type, severity, reason)
@@ -54,7 +51,7 @@ VALUES (seq_compat_rule.NEXTVAL,
     'Coral skeleton decor may leach calcium and raise pH beyond neon tetra tolerance (6.0-7.5).'
 );
 
--- ── WARNING RULES (advisory only) ────────────────────────────
+-- WARNING RULES (advisory only)
 
 -- Angelfish with Corydoras: generally fine but monitor
 INSERT INTO compatibility_rules (rule_id, product_id_a, product_id_b, rule_type, severity, reason)
@@ -74,7 +71,7 @@ VALUES (seq_compat_rule.NEXTVAL,
     'Blue Tang requires a minimum of 200L. A 30L nano tank causes severe stress and disease.'
 );
 
--- ── NEUTRAL / RECOMMENDED PAIRINGS ────────────────────────────
+-- NEUTRAL / RECOMMENDED PAIRINGS
 
 -- Neon Tetra + Corydoras: classic community pairing
 INSERT INTO compatibility_rules (rule_id, product_id_a, product_id_b, rule_type, severity, reason)

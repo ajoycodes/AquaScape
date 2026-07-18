@@ -1,12 +1,6 @@
--- ============================================================
--- MODULE 4: ORDER & PAYMENT SYSTEM SCHEMA
--- Run as AQUASCAPE user — depends on 01_core_schema.sql
---                          and 02_aquarium_schema.sql
--- ============================================================
+-- Run as AQUASCAPE user — depends on 01 and 02 schema files
 
--- ============================================================
 -- SEQUENCES
--- ============================================================
 
 CREATE SEQUENCE seq_discount      START WITH 1    INCREMENT BY 1  NOCACHE NOCYCLE;
 CREATE SEQUENCE seq_order         START WITH 1000 INCREMENT BY 1  NOCACHE NOCYCLE;
@@ -15,10 +9,7 @@ CREATE SEQUENCE seq_payment       START WITH 1    INCREMENT BY 1  NOCACHE NOCYCL
 CREATE SEQUENCE seq_return        START WITH 1    INCREMENT BY 1  NOCACHE NOCYCLE;
 CREATE SEQUENCE seq_return_item   START WITH 1    INCREMENT BY 1  NOCACHE NOCYCLE;
 
--- ============================================================
--- TABLE: DISCOUNTS
 -- Promotional / coupon codes
--- ============================================================
 CREATE TABLE discounts (
     discount_id     NUMBER          DEFAULT seq_discount.NEXTVAL  NOT NULL,
     code            VARCHAR2(50)    NOT NULL,
@@ -47,10 +38,7 @@ COMMENT ON TABLE  discounts               IS 'Promotional discount codes — per
 COMMENT ON COLUMN discounts.discount_type IS 'PERCENT = percentage off | FIXED = fixed amount off';
 COMMENT ON COLUMN discounts.max_uses      IS 'NULL = unlimited uses';
 
--- ============================================================
--- TABLE: ORDERS
 -- Order header — one record per customer transaction
--- ============================================================
 CREATE TABLE orders (
     order_id        NUMBER          DEFAULT seq_order.NEXTVAL   NOT NULL,
     customer_id     NUMBER          NOT NULL,
@@ -81,10 +69,7 @@ COMMENT ON COLUMN orders.setup_id     IS 'Optional — set when order originates
 COMMENT ON COLUMN orders.order_status IS 'State machine: PENDING → CONFIRMED → PROCESSING → SHIPPED → DELIVERED';
 COMMENT ON COLUMN orders.subtotal     IS 'Sum of line totals before discount/tax — auto-maintained by trigger';
 
--- ============================================================
--- TABLE: ORDER_ITEMS
 -- Line items belonging to an order
--- ============================================================
 CREATE TABLE order_items (
     order_item_id   NUMBER          DEFAULT seq_order_item.NEXTVAL  NOT NULL,
     order_id        NUMBER          NOT NULL,
@@ -105,10 +90,7 @@ CREATE TABLE order_items (
 COMMENT ON TABLE  order_items             IS 'Line items per order — triggers auto-update order totals';
 COMMENT ON COLUMN order_items.unit_price  IS 'Price at time of purchase — not linked live to products table';
 
--- ============================================================
--- TABLE: ORDER_DISCOUNTS
 -- Junction table — discounts applied to orders
--- ============================================================
 CREATE TABLE order_discounts (
     order_id        NUMBER          NOT NULL,
     discount_id     NUMBER          NOT NULL,
@@ -123,10 +105,7 @@ CREATE TABLE order_discounts (
 
 COMMENT ON TABLE order_discounts IS 'Junction: tracks which discounts were applied to which orders';
 
--- ============================================================
--- TABLE: PAYMENTS
 -- Payment records — one or more per order
--- ============================================================
 CREATE TABLE payments (
     payment_id      NUMBER          DEFAULT seq_payment.NEXTVAL   NOT NULL,
     order_id        NUMBER          NOT NULL,
@@ -147,10 +126,7 @@ CREATE TABLE payments (
 COMMENT ON TABLE  payments                IS 'Payment records — separate from order status for flexibility';
 COMMENT ON COLUMN payments.payment_status IS 'PENDING | COMPLETED | FAILED | REFUNDED';
 
--- ============================================================
--- TABLE: RETURNS
 -- Return request header
--- ============================================================
 CREATE TABLE returns (
     return_id       NUMBER          DEFAULT seq_return.NEXTVAL    NOT NULL,
     order_id        NUMBER          NOT NULL,
@@ -173,10 +149,7 @@ CREATE TABLE returns (
 COMMENT ON TABLE  returns               IS 'Return request header — links order and customer';
 COMMENT ON COLUMN returns.return_status IS 'REQUESTED → APPROVED/REJECTED → REFUNDED';
 
--- ============================================================
--- TABLE: RETURN_ITEMS
 -- Individual items included in a return request
--- ============================================================
 CREATE TABLE return_items (
     return_item_id  NUMBER          DEFAULT seq_return_item.NEXTVAL NOT NULL,
     return_id       NUMBER          NOT NULL,
@@ -195,9 +168,7 @@ CREATE TABLE return_items (
 COMMENT ON TABLE  return_items                IS 'Line items within a return — condition determines restocking';
 COMMENT ON COLUMN return_items.condition_code IS 'GOOD = restock | DAMAGED/DEAD = write-off';
 
--- ============================================================
 -- VERIFY CREATION
--- ============================================================
 SELECT table_name FROM user_tables
 WHERE table_name IN (
     'DISCOUNTS','ORDERS','ORDER_ITEMS','ORDER_DISCOUNTS',

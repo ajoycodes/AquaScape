@@ -1,9 +1,6 @@
--- ============================================================
--- MODULE 13: AQUASCAPE DEMO SCRIPT
 -- Full walkthrough for professor/TA presentation.
 -- Run each numbered step in sequence with DBMS_OUTPUT enabled.
 -- SET SERVEROUTPUT ON SIZE UNLIMITED before running.
--- ============================================================
 --
 -- DEMO FLOW:
 --   Step 1  — Verify schema (table/view/procedure counts)
@@ -16,22 +13,18 @@
 --   Step 8  — View demo: vw_dashboard_kpis single-row KPIs
 --   Step 9  — View demo: sales + profit analytics
 --   Step 10 — Supplier PO lifecycle end-to-end
--- ============================================================
 
 SET SERVEROUTPUT ON SIZE UNLIMITED
 SET LINESIZE 200
 SET PAGESIZE 100
 
--- ============================================================
 -- STEP 1: SCHEMA VERIFICATION
 -- Shows all objects created in the AQUASCAPE schema.
--- ============================================================
 
 PROMPT ============================================================
 PROMPT STEP 1: Schema Verification
 PROMPT ============================================================
 
--- Table count
 SELECT 'Tables'     AS object_type, COUNT(*) AS count FROM user_tables
 UNION ALL
 SELECT 'Views',     COUNT(*) FROM user_views
@@ -55,11 +48,9 @@ SELECT t.table_name,
 FROM user_tables t
 ORDER BY t.table_name;
 
--- ============================================================
 -- STEP 2: TRIGGER DEMO — Compatibility Check (trg_compat_check)
 -- Attempting to add a Betta and a Neon Tetra to the same setup.
 -- trg_compat_check should RAISE_APPLICATION_ERROR -20200.
--- ============================================================
 
 PROMPT ============================================================
 PROMPT STEP 2: Trigger — Compatibility Block (Betta vs Neon Tetra)
@@ -111,10 +102,8 @@ BEGIN
 END;
 /
 
--- ============================================================
 -- STEP 3: TRIGGER DEMO — Water Type Mismatch (trg_validate_water_item)
 -- Attempting to add a saltwater fish (Clownfish) to a freshwater setup.
--- ============================================================
 
 PROMPT ============================================================
 PROMPT STEP 3: Trigger — Water Type Mismatch Block
@@ -155,10 +144,8 @@ BEGIN
 END;
 /
 
--- ============================================================
 -- STEP 4: TRIGGER DEMO — Negative Stock Guard (trg_no_negative_stock)
 -- Attempting to set qty_on_hand below 0 directly.
--- ============================================================
 
 PROMPT ============================================================
 PROMPT STEP 4: Trigger — Negative Stock Prevention
@@ -193,11 +180,9 @@ BEGIN
 END;
 /
 
--- ============================================================
 -- STEP 5: PROCEDURE DEMO — place_order ACID Flow
 -- Leo Santos buys Zebra Danios and a Starter Tank.
 -- Shows: cart→order→stock deduction→movement log in one transaction.
--- ============================================================
 
 PROMPT ============================================================
 PROMPT STEP 5: Procedure — place_order (Full ACID Flow)
@@ -277,10 +262,8 @@ BEGIN
 END;
 /
 
--- ============================================================
 -- STEP 6: PROCEDURE DEMO — cancel_order with stock restore
 -- Cancels the order placed in Step 5 and verifies stock is restored.
--- ============================================================
 
 PROMPT ============================================================
 PROMPT STEP 6: Procedure — cancel_order (Stock Rollback)
@@ -327,10 +310,8 @@ BEGIN
 END;
 /
 
--- ============================================================
 -- STEP 7: FUNCTION DEMO — Compatibility + Validation Functions
 -- Demonstrates scalar functions returning values.
--- ============================================================
 
 PROMPT ============================================================
 PROMPT STEP 7: Functions — Compatibility & Validation
@@ -380,10 +361,8 @@ BEGIN
 END;
 /
 
--- ============================================================
 -- STEP 8: VIEW DEMO — vw_dashboard_kpis
 -- Single FROM DUAL query that pulls 10+ live KPIs.
--- ============================================================
 
 PROMPT ============================================================
 PROMPT STEP 8: View — Dashboard KPIs (vw_dashboard_kpis)
@@ -414,9 +393,7 @@ FROM   vw_inventory_summary
 WHERE  stock_health IN ('LOW_STOCK', 'OUT_OF_STOCK')
 ORDER  BY qty_on_hand;
 
--- ============================================================
 -- STEP 9: VIEW DEMO — Sales & Profit Analytics
--- ============================================================
 
 PROMPT ============================================================
 PROMPT STEP 9: Views — Sales & Profit Analytics
@@ -459,11 +436,9 @@ FROM   vw_fast_movers
 ORDER  BY units_sold_30d DESC
 FETCH FIRST 10 ROWS ONLY;
 
--- ============================================================
 -- STEP 10: SUPPLIER PO LIFECYCLE
 -- Full Demo: create PO → add items → submit → approve → receive
 -- Stock levels checked before and after.
--- ============================================================
 
 PROMPT ============================================================
 PROMPT STEP 10: Supplier PO Lifecycle (End-to-End)

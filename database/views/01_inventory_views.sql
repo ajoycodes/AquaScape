@@ -1,12 +1,6 @@
--- ============================================================
--- MODULE 9a: INVENTORY & STOCK VIEWS
--- ============================================================
 
--- ============================================================
--- VIEW: vw_low_stock
 -- Products at or below their reorder level.
 -- Shows shortage gap and reorder recommendation.
--- ============================================================
 CREATE OR REPLACE VIEW vw_low_stock AS
 SELECT
     p.product_id,
@@ -39,10 +33,7 @@ ORDER BY shortage_qty DESC, i.qty_on_hand ASC;
 
 COMMENT ON TABLE vw_low_stock IS 'Products at or below reorder level — used by dashboard alerts';
 
--- ============================================================
--- VIEW: vw_inventory_summary
 -- Full inventory snapshot with product details and stock status.
--- ============================================================
 CREATE OR REPLACE VIEW vw_inventory_summary AS
 SELECT
     p.product_id,
@@ -70,10 +61,7 @@ JOIN categories c ON p.category_id = c.category_id
 WHERE p.is_active = 1
 ORDER BY stock_health, p.product_name;
 
--- ============================================================
--- VIEW: vw_supplier_inventory
 -- Per-supplier summary of products supplied and stock value.
--- ============================================================
 CREATE OR REPLACE VIEW vw_supplier_inventory AS
 SELECT
     s.supplier_id,
@@ -91,10 +79,7 @@ WHERE spo.po_status = 'RECEIVED'
 GROUP BY s.supplier_id, s.supplier_name, s.country
 ORDER BY total_stock_cost DESC;
 
--- ============================================================
--- VIEW: vw_stock_movement_log
 -- Last 500 inventory movements with product and user info.
--- ============================================================
 CREATE OR REPLACE VIEW vw_stock_movement_log AS
 SELECT
     im.movement_id,

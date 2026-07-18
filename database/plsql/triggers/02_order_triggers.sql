@@ -1,18 +1,12 @@
--- ============================================================
--- MODULE 8b: ORDER TRIGGERS
 -- trg_update_order_total   — auto-recalculate totals
 -- trg_audit_orders         — DML audit log
 -- trg_order_timestamp      — auto updated_at (products table)
--- ============================================================
 
--- ============================================================
--- TRIGGER: trg_update_order_total
 -- Fires FOR INSERT, UPDATE, DELETE on ORDER_ITEMS.
 -- Uses a COMPOUND TRIGGER to avoid ORA-04091 mutating table:
 --   AFTER EACH ROW  — collects affected order IDs into a collection
 --   AFTER STATEMENT — performs the SUM once per order after all
 --                     row inserts complete (table no longer mutating)
--- ============================================================
 CREATE OR REPLACE TRIGGER trg_update_order_total
 FOR INSERT OR UPDATE OR DELETE ON order_items
 COMPOUND TRIGGER
@@ -67,11 +61,8 @@ END AFTER STATEMENT;
 END trg_update_order_total;
 /
 
--- ============================================================
--- TRIGGER: trg_audit_orders
 -- Fires AFTER INSERT, UPDATE, DELETE on ORDERS.
 -- Records the old and new status + total to audit_log.
--- ============================================================
 CREATE OR REPLACE TRIGGER trg_audit_orders
 AFTER INSERT OR UPDATE OR DELETE ON orders
 FOR EACH ROW
@@ -111,11 +102,8 @@ EXCEPTION
 END trg_audit_orders;
 /
 
--- ============================================================
--- TRIGGER: trg_audit_products
 -- Fires AFTER INSERT, UPDATE, DELETE on PRODUCTS.
 -- Captures price changes and activation toggling.
--- ============================================================
 CREATE OR REPLACE TRIGGER trg_audit_products
 AFTER INSERT OR UPDATE OR DELETE ON products
 FOR EACH ROW
@@ -154,11 +142,8 @@ EXCEPTION
 END trg_audit_products;
 /
 
--- ============================================================
--- TRIGGER: trg_audit_inventory
 -- Fires AFTER UPDATE on INVENTORY.
 -- Records qty changes for full stock audit trail.
--- ============================================================
 CREATE OR REPLACE TRIGGER trg_audit_inventory
 AFTER UPDATE ON inventory
 FOR EACH ROW
@@ -176,10 +161,7 @@ EXCEPTION
 END trg_audit_inventory;
 /
 
--- ============================================================
--- TRIGGER: trg_product_updated_at
 -- Fires BEFORE UPDATE on PRODUCTS — keeps updated_at current.
--- ============================================================
 CREATE OR REPLACE TRIGGER trg_product_updated_at
 BEFORE UPDATE ON products
 FOR EACH ROW
@@ -188,10 +170,7 @@ BEGIN
 END trg_product_updated_at;
 /
 
--- ============================================================
--- TRIGGER: trg_setup_updated_at
 -- Fires BEFORE UPDATE on AQUARIUM_SETUPS.
--- ============================================================
 CREATE OR REPLACE TRIGGER trg_setup_updated_at
 BEFORE UPDATE ON aquarium_setups
 FOR EACH ROW

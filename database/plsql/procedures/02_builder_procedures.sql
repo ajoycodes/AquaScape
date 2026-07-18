@@ -1,13 +1,7 @@
--- ============================================================
--- MODULE 6b: AQUARIUM BUILDER PROCEDURES
 -- create_aquarium_setup / add_item_to_setup / save_setup
--- ============================================================
 
--- ============================================================
--- PROCEDURE: create_aquarium_setup
 -- Creates a new aquarium design for a customer.
 -- Validates that the tank exists before proceeding.
--- ============================================================
 CREATE OR REPLACE PROCEDURE create_aquarium_setup (
     p_customer_id   IN  NUMBER,
     p_tank_id       IN  NUMBER,
@@ -64,12 +58,8 @@ EXCEPTION
 END create_aquarium_setup;
 /
 
--- ============================================================
--- PROCEDURE: add_item_to_setup
 -- Adds a product to an aquarium setup.
 -- Calls check_compatibility function before insert.
--- Trigger trg_compat_check provides DB-level enforcement.
--- ============================================================
 CREATE OR REPLACE PROCEDURE add_item_to_setup (
     p_setup_id      IN NUMBER,
     p_product_id    IN NUMBER,
@@ -134,11 +124,8 @@ EXCEPTION
 END add_item_to_setup;
 /
 
--- ============================================================
--- PROCEDURE: save_setup
 -- Validates and marks a setup as SAVED.
 -- Runs all validation functions; fails if any check fails.
--- ============================================================
 CREATE OR REPLACE PROCEDURE save_setup (
     p_setup_id      IN  NUMBER,
     p_customer_id   IN  NUMBER,

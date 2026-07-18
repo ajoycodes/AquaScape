@@ -1,11 +1,6 @@
--- ============================================================
--- MODULE 3: AQUARIUM BUILDER SCHEMA
 -- Run as AQUASCAPE user — depends on 01_core_schema.sql
--- ============================================================
 
--- ============================================================
 -- SEQUENCES
--- ============================================================
 
 CREATE SEQUENCE seq_setup         START WITH 1    INCREMENT BY 1 NOCACHE NOCYCLE;
 CREATE SEQUENCE seq_setup_item    START WITH 1    INCREMENT BY 1 NOCACHE NOCYCLE;
@@ -15,10 +10,7 @@ CREATE SEQUENCE seq_wishlist      START WITH 1    INCREMENT BY 1 NOCACHE NOCYCLE
 CREATE SEQUENCE seq_cart          START WITH 1    INCREMENT BY 1 NOCACHE NOCYCLE;
 CREATE SEQUENCE seq_cart_item     START WITH 1    INCREMENT BY 1 NOCACHE NOCYCLE;
 
--- ============================================================
--- TABLE: AQUARIUM_SETUPS
 -- A customer's named aquarium design / build
--- ============================================================
 CREATE TABLE aquarium_setups (
     setup_id        NUMBER          DEFAULT seq_setup.NEXTVAL    NOT NULL,
     customer_id     NUMBER          NOT NULL,
@@ -44,10 +36,7 @@ CREATE TABLE aquarium_setups (
 COMMENT ON TABLE  aquarium_setups         IS 'Customer-designed aquarium configurations';
 COMMENT ON COLUMN aquarium_setups.status  IS 'DRAFT = in progress | SAVED = finalized | ORDERED = purchased | ARCHIVED = old';
 
--- ============================================================
--- TABLE: SETUP_ITEMS
 -- Individual items (fish/plant/equip/deco) within a setup
--- ============================================================
 CREATE TABLE setup_items (
     setup_item_id   NUMBER          DEFAULT seq_setup_item.NEXTVAL NOT NULL,
     setup_id        NUMBER          NOT NULL,
@@ -68,10 +57,7 @@ CREATE TABLE setup_items (
 COMMENT ON TABLE  setup_items              IS 'Items added to an aquarium setup design';
 COMMENT ON COLUMN setup_items.item_type    IS 'Mirrors product_type — FISH | PLANT | EQUIPMENT | DECORATION';
 
--- ============================================================
--- TABLE: COMPATIBILITY_RULES
 -- Admin-defined rules for what can/cannot coexist
--- ============================================================
 CREATE TABLE compatibility_rules (
     rule_id         NUMBER          DEFAULT seq_compat_rule.NEXTVAL NOT NULL,
     product_id_a    NUMBER          NOT NULL,
@@ -96,10 +82,7 @@ COMMENT ON TABLE  compatibility_rules           IS 'Admin-defined rules for item
 COMMENT ON COLUMN compatibility_rules.rule_type IS 'INCOMPATIBLE = cannot coexist | REQUIRES = must accompany | NEUTRAL = documented but allowed';
 COMMENT ON COLUMN compatibility_rules.severity  IS 'ERROR = blocks add | WARNING = alert only';
 
--- ============================================================
--- TABLE: SAVED_SETUPS
 -- Published / shareable snapshots of a completed design
--- ============================================================
 CREATE TABLE saved_setups (
     saved_id        NUMBER          DEFAULT seq_saved_setup.NEXTVAL NOT NULL,
     setup_id        NUMBER          NOT NULL,
@@ -118,10 +101,7 @@ CREATE TABLE saved_setups (
 
 COMMENT ON TABLE saved_setups IS 'Public / shareable snapshots of finalized setups';
 
--- ============================================================
--- TABLE: WISHLIST
 -- Products a customer wants but has not yet added to cart
--- ============================================================
 CREATE TABLE wishlist (
     wishlist_id     NUMBER          DEFAULT seq_wishlist.NEXTVAL   NOT NULL,
     customer_id     NUMBER          NOT NULL,
@@ -136,10 +116,7 @@ CREATE TABLE wishlist (
 
 COMMENT ON TABLE wishlist IS 'Per-customer product wishlist — one entry per product';
 
--- ============================================================
--- TABLE: CART
 -- Active shopping cart — one per customer
--- ============================================================
 CREATE TABLE cart (
     cart_id         NUMBER          DEFAULT seq_cart.NEXTVAL        NOT NULL,
     customer_id     NUMBER          NOT NULL,
@@ -153,10 +130,7 @@ CREATE TABLE cart (
 
 COMMENT ON TABLE cart IS 'Active cart — enforced one per customer via UNIQUE constraint';
 
--- ============================================================
--- TABLE: CART_ITEMS
 -- Line items inside a customer's cart
--- ============================================================
 CREATE TABLE cart_items (
     cart_item_id    NUMBER          DEFAULT seq_cart_item.NEXTVAL   NOT NULL,
     cart_id         NUMBER          NOT NULL,
@@ -173,9 +147,7 @@ CREATE TABLE cart_items (
 
 COMMENT ON TABLE cart_items IS 'Line items in a customers cart — cascades delete when cart is cleared';
 
--- ============================================================
 -- VERIFY CREATION
--- ============================================================
 SELECT table_name FROM user_tables
 WHERE table_name IN (
     'AQUARIUM_SETUPS','SETUP_ITEMS','COMPATIBILITY_RULES',

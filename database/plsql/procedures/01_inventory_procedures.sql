@@ -1,14 +1,8 @@
--- ============================================================
--- MODULE 6a: INVENTORY PROCEDURES
 -- update_inventory / add_product_to_inventory
--- ============================================================
 
--- ============================================================
--- PROCEDURE: update_inventory
 -- Central procedure for all stock changes.
 -- Called by order, return, supplier, and adjustment procedures.
 -- p_delta: positive = add stock, negative = remove stock
--- ============================================================
 CREATE OR REPLACE PROCEDURE update_inventory (
     p_product_id    IN  NUMBER,
     p_delta         IN  NUMBER,
@@ -67,10 +61,7 @@ EXCEPTION
 END update_inventory;
 /
 
--- ============================================================
--- PROCEDURE: add_product_to_inventory
 -- Creates inventory record when a new product is registered.
--- ============================================================
 CREATE OR REPLACE PROCEDURE add_product_to_inventory (
     p_product_id    IN NUMBER,
     p_initial_qty   IN NUMBER   DEFAULT 0,
