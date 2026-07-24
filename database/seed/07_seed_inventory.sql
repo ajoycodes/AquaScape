@@ -1,9 +1,6 @@
--- Simulates some prior stock activity to populate movement log.
 
 PROMPT Seeding inventory history...
 
--- Simulate a few purchase receipts to populate movement history
--- (update_inventory handles movement logging automatically)
 
 DECLARE
     -- Neon Tetra bulk purchase

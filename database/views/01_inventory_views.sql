@@ -1,6 +1,4 @@
 
--- Products at or below their reorder level.
--- Shows shortage gap and reorder recommendation.
 CREATE OR REPLACE VIEW vw_low_stock AS
 SELECT
     p.product_id,

@@ -40,7 +40,7 @@ The schema is organised into **4 functional domains** across **32 tables**:
 
 ### ER Diagram
 
-![AquaScape ER Diagram](AquaScape_ER_Diagram.png)
+![AquaScape ER Diagram](Documents/up%20AquaScape_Chen_ER_Diagram.png)
 
 ---
 
@@ -48,6 +48,7 @@ The schema is organised into **4 functional domains** across **32 tables**:
 
 ```
 AquaScape/
+├── Documents/          # Reports, diagrams, and presentation files
 ├── database/
 │   └── schema/          # Oracle DDL scripts
 ├── backend/             # Node.js / Express API
